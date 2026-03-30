@@ -571,9 +571,11 @@ input[type=range]::-moz-range-thumb{
    ═══════════════════════════════════════════ */
 @media(max-width:600px){
   .screen{padding:1rem;padding-top:calc(1rem + var(--safe-top));padding-bottom:calc(1rem + var(--safe-bottom))}
-  #read-screen{padding:.75rem;padding-top:calc(1rem + var(--safe-top))}
-  .read-topbar{padding-top:.5rem}
-  .read-topbar-actions .btn-icon{width:48px;height:48px;font-size:1.1rem}
+  #read-screen{padding:.75rem;padding-top:calc(2.5rem + var(--safe-top))}
+  .read-topbar{flex-wrap:wrap;gap:.35rem;padding-top:.25rem}
+  .read-topbar-left{width:100%}
+  .read-topbar-actions{width:100%;justify-content:flex-end;gap:.35rem}
+  .read-topbar-actions .btn-icon{width:40px;height:40px;font-size:.95rem}
   .rsvp-focus-box{padding:1rem;min-width:auto}
   .controls-sliders{gap:.75rem}
   .slider-group input[type=range]{width:80px}
