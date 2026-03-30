@@ -571,7 +571,9 @@ input[type=range]::-moz-range-thumb{
    ═══════════════════════════════════════════ */
 @media(max-width:600px){
   .screen{padding:1rem;padding-top:calc(1rem + var(--safe-top));padding-bottom:calc(1rem + var(--safe-bottom))}
-  #read-screen{padding:.75rem}
+  #read-screen{padding:.75rem;padding-top:calc(1rem + var(--safe-top))}
+  .read-topbar{padding-top:.5rem}
+  .read-topbar-actions .btn-icon{width:48px;height:48px;font-size:1.1rem}
   .rsvp-focus-box{padding:1rem;min-width:auto}
   .controls-sliders{gap:.75rem}
   .slider-group input[type=range]{width:80px}
