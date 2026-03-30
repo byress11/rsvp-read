@@ -294,8 +294,8 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
 }
 
 /* Heading words in RSVP */
-.rsvp-word.heading{color:#9B8EC4;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.rsvp-word.heading .orp{color:#B8ADDA}
+.rsvp-word.heading{color:#E05252;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:calc(var(--rsvp-font-size) * 1.1)}
+.rsvp-word.heading .orp{color:#FF6B6B;font-weight:900}
 
 /* Context viewer */
 .context-viewer{
@@ -314,7 +314,7 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
   text-align:justify;word-spacing:.1em;
 }
 .context-viewer-inner .ctx-heading{
-  color:#9B8EC4;font-weight:700;text-transform:uppercase;
+  color:#E05252;font-weight:800;text-transform:uppercase;
 }
 .ctx-word{
   cursor:pointer;border-radius:3px;padding:.05em .15em;
@@ -620,85 +620,116 @@ input[type=range]::-moz-range-thumb{
   position:fixed;inset:0;z-index:110;
   display:none;align-items:center;justify-content:center;
   padding:1rem;
-  background:rgba(0,0,0,0.7);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
 }
 #editor-overlay.active{display:flex}
 
 .editor-panel{
-  background:var(--glass);
+  background:var(--bg-secondary);
   border:1px solid var(--glass-border);
   border-radius:var(--radius-lg);
-  padding:1.5rem;
-  max-width:800px;width:100%;
+  max-width:860px;width:100%;
   max-height:92vh;
   display:flex;flex-direction:column;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  animation:slideUp .2s ease-out;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.05);
+  animation:slideUp .25s ease-out;
+  overflow:hidden;
 }
 .editor-header{
   display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:.75rem;
+  padding:1.25rem 1.5rem;
+  background:linear-gradient(135deg,rgba(196,149,106,0.12),rgba(196,149,106,0.03));
+  border-bottom:1px solid var(--glass-border);
 }
-.editor-header h2{font-size:1.2rem}
+.editor-header h2{font-size:1.15rem;font-weight:700;letter-spacing:.01em}
 .editor-desc{
   font-size:.8rem;color:var(--text-secondary);line-height:1.5;
-  margin-bottom:.75rem;
+  padding:.75rem 1.5rem;margin:0;
+  border-bottom:1px solid var(--glass-border);
+  background:rgba(196,149,106,0.03);
 }
+.editor-body{padding:1rem 1.5rem;display:flex;flex-direction:column;flex:1;min-height:0}
 .editor-toolbar{
   display:flex;flex-wrap:wrap;gap:.4rem;
   margin-bottom:.75rem;
+  padding:.5rem;
+  background:var(--bg-tertiary);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--glass-border);
 }
+.editor-toolbar .toolbar-group{
+  display:flex;gap:.25rem;
+  padding-right:.5rem;
+  border-right:1px solid var(--glass-border);
+}
+.editor-toolbar .toolbar-group:last-child{border-right:none;padding-right:0}
 .btn-sm{
-  padding:.35rem .65rem!important;font-size:.72rem!important;
+  padding:.4rem .7rem!important;font-size:.73rem!important;
   min-height:34px!important;gap:.3rem!important;
+  border-radius:var(--radius-sm)!important;
+  transition:all .15s!important;
 }
+.btn-sm:hover{transform:translateY(-1px)!important;box-shadow:0 2px 8px rgba(0,0,0,0.2)!important}
 .editor-stats{
   font-size:.72rem;color:var(--text-secondary);
   margin-bottom:.5rem;
+  display:flex;gap:1rem;
+  padding:.35rem .5rem;
+  background:var(--bg-tertiary);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--glass-border);
 }
 #editor-textarea{
   flex:1;min-height:300px;
   width:100%;
-  background:var(--bg-secondary);color:var(--text);
+  background:var(--bg);color:var(--text);
   border:1px solid var(--glass-border);
   border-radius:var(--radius);
-  padding:1rem;
-  font-family:var(--font-body);font-size:.88rem;
-  line-height:1.7;resize:vertical;
-  transition:border-color .2s;
+  padding:1.25rem 1rem 1.25rem 1.25rem;
+  font-family:'Courier New',Consolas,monospace;font-size:.88rem;
+  line-height:1.8;resize:vertical;
+  transition:border-color .25s,box-shadow .25s;
+  tab-size:2;
 }
-#editor-textarea:focus{border-color:var(--accent);outline:none}
+#editor-textarea:focus{
+  border-color:var(--accent);outline:none;
+  box-shadow:0 0 0 3px rgba(196,149,106,0.15);
+}
 .editor-actions{
   display:flex;justify-content:flex-end;gap:.75rem;
-  margin-top:.75rem;
+  padding:1rem 1.5rem;
+  border-top:1px solid var(--glass-border);
+  background:rgba(196,149,106,0.03);
 }
+.editor-actions .btn{font-weight:600;letter-spacing:.02em}
+.editor-actions .btn-primary{box-shadow:0 4px 16px rgba(196,149,106,0.25)}
+.editor-actions .btn-primary:hover{box-shadow:0 6px 24px rgba(196,149,106,0.35);transform:translateY(-1px)}
 .find-replace-bar{
   background:var(--bg-tertiary);
   border:1px solid var(--glass-border);
   border-radius:var(--radius-sm);
-  padding:.65rem .85rem;
+  padding:.75rem 1rem;
   margin-bottom:.75rem;
-  display:flex;flex-direction:column;gap:.45rem;
+  display:flex;flex-direction:column;gap:.5rem;
 }
 .find-replace-row{
   display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;
 }
 .find-replace-row input[type=text]{
   flex:1;min-width:140px;
-  background:var(--bg-secondary);color:var(--text);
+  background:var(--bg);color:var(--text);
   border:1px solid var(--glass-border);border-radius:var(--radius-sm);
-  padding:.35rem .6rem;font-size:.8rem;font-family:var(--font-body);
-  transition:border-color .2s;
+  padding:.4rem .7rem;font-size:.8rem;font-family:var(--font-body);
+  transition:border-color .2s,box-shadow .2s;
 }
-.find-replace-row input[type=text]:focus{border-color:var(--accent);outline:none}
+.find-replace-row input[type=text]:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(196,149,106,0.12)}
 .fr-check{
   display:flex;align-items:center;gap:.3rem;
   font-size:.75rem;color:var(--text-secondary);cursor:pointer;white-space:nowrap;
 }
 .fr-match-count{
-  font-size:.75rem;color:var(--accent);white-space:nowrap;min-width:80px;
+  font-size:.75rem;color:var(--accent);white-space:nowrap;min-width:80px;font-weight:600;
 }
 .fr-actions{justify-content:flex-start}
 @media(max-width:600px){
@@ -707,10 +738,14 @@ input[type=range]::-moz-range-thumb{
 }
 
 @media(max-width:600px){
-  .editor-panel{padding:1rem;max-height:95vh}
-  .editor-toolbar{gap:.3rem}
+  .editor-panel{max-height:95vh}
+  .editor-header{padding:1rem}
+  .editor-desc{padding:.5rem 1rem}
+  .editor-body{padding:.75rem 1rem}
+  .editor-toolbar{gap:.3rem;padding:.35rem}
   .btn-sm{padding:.3rem .5rem!important;font-size:.65rem!important}
-  #editor-textarea{min-height:200px;font-size:.8rem}
+  #editor-textarea{min-height:200px;font-size:.8rem;padding:1rem .75rem}
+  .editor-actions{padding:.75rem 1rem}
 }
 
 /* Google Drive status indicator */
@@ -1087,50 +1122,58 @@ input[type=range]::-moz-range-thumb{
       PDF'den çıkarılan metin aşağıda gösterilmektedir. Otomatik düzeltmeleri uygulayabilir,
       metni elle düzenleyebilir ve hazır olunca okumaya başlayabilirsiniz.
     </p>
-    <div class="editor-toolbar">
-      <button class="btn btn-secondary btn-sm" id="btn-auto-fix" title="Otomatik düzeltmeleri uygula">
-        ✨ Otomatik Düzelt
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-remove-hyphens" title="Satır sonu tireleri birleştir">
-        ➖ Tireleri Kaldır
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-remove-pagenum" title="Sayfa numaralarını kaldır">
-        🔢 Sayfa No Sil
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-remove-extra-spaces" title="Fazla boşlukları temizle">
-        ⎵ Boşlukları Düzelt
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-remove-headers" title="Tekrarlayan üst/alt bilgileri kaldır">
-        📋 Üstbilgi/Altbilgi Sil
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-undo-edit" title="Son değişikliği geri al">
-        ↩ Geri Al
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-find-replace" title="Kelime bul ve değiştir">
-        🔍 Bul &amp; Değiştir
-      </button>
-    </div>
+    <div class="editor-body">
+      <div class="editor-toolbar">
+        <span class="toolbar-group">
+          <button class="btn btn-secondary btn-sm" id="btn-auto-fix" title="Otomatik düzeltmeleri uygula">
+            ✨ Otomatik Düzelt
+          </button>
+        </span>
+        <span class="toolbar-group">
+          <button class="btn btn-secondary btn-sm" id="btn-remove-hyphens" title="Satır sonu tireleri birleştir">
+            ➖ Tire
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-remove-pagenum" title="Sayfa numaralarını kaldır">
+            🔢 Sayfa No
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-remove-extra-spaces" title="Fazla boşlukları temizle">
+            ⎵ Boşluk
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-remove-headers" title="Tekrarlayan üst/alt bilgileri kaldır">
+            📋 Üstbilgi
+          </button>
+        </span>
+        <span class="toolbar-group">
+          <button class="btn btn-secondary btn-sm" id="btn-undo-edit" title="Son değişikliği geri al">
+            ↩ Geri Al
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-find-replace" title="Kelime bul ve değiştir">
+            🔍 Bul &amp; Değiştir
+          </button>
+        </span>
+      </div>
 
-    <div id="find-replace-bar" class="find-replace-bar" style="display:none">
-      <div class="find-replace-row">
-        <input type="text" id="fr-find" placeholder="Aranacak metin..." aria-label="Aranacak metin" autocomplete="off" spellcheck="false">
-        <label class="fr-check"><input type="checkbox" id="fr-case"> Büyük/Küçük Harf</label>
-        <label class="fr-check"><input type="checkbox" id="fr-word"> Tam Kelime</label>
+      <div id="find-replace-bar" class="find-replace-bar" style="display:none">
+        <div class="find-replace-row">
+          <input type="text" id="fr-find" placeholder="Aranacak metin..." aria-label="Aranacak metin" autocomplete="off" spellcheck="false">
+          <label class="fr-check"><input type="checkbox" id="fr-case"> Büyük/Küçük Harf</label>
+          <label class="fr-check"><input type="checkbox" id="fr-word"> Tam Kelime</label>
+        </div>
+        <div class="find-replace-row">
+          <input type="text" id="fr-replace" placeholder="Yeni metin (boş bırakılırsa siler)..." aria-label="Yeni metin" autocomplete="off" spellcheck="false">
+          <span id="fr-match-count" class="fr-match-count"></span>
+        </div>
+        <div class="find-replace-row fr-actions">
+          <button class="btn btn-secondary btn-sm" id="fr-btn-replace-one">Birini Değiştir</button>
+          <button class="btn btn-secondary btn-sm" id="fr-btn-replace-all">Tümünü Değiştir</button>
+          <button class="btn btn-secondary btn-sm" id="fr-btn-delete-all">Tümünü Sil</button>
+          <button class="btn btn-secondary btn-sm" id="fr-btn-close">✕ Kapat</button>
+        </div>
       </div>
-      <div class="find-replace-row">
-        <input type="text" id="fr-replace" placeholder="Yeni metin (boş bırakılırsa siler)..." aria-label="Yeni metin" autocomplete="off" spellcheck="false">
-        <span id="fr-match-count" class="fr-match-count"></span>
-      </div>
-      <div class="find-replace-row fr-actions">
-        <button class="btn btn-secondary btn-sm" id="fr-btn-replace-one">Birini Değiştir</button>
-        <button class="btn btn-secondary btn-sm" id="fr-btn-replace-all">Tümünü Değiştir</button>
-        <button class="btn btn-secondary btn-sm" id="fr-btn-delete-all">Tümünü Sil</button>
-        <button class="btn btn-secondary btn-sm" id="fr-btn-close">✕ Kapat</button>
-      </div>
-    </div>
 
-    <div class="editor-stats" id="editor-stats"></div>
-    <textarea id="editor-textarea" spellcheck="true" aria-label="Düzenlenebilir metin"></textarea>
+      <div class="editor-stats" id="editor-stats"></div>
+      <textarea id="editor-textarea" spellcheck="true" aria-label="Düzenlenebilir metin"></textarea>
+    </div>
     <div class="editor-actions">
       <button class="btn btn-secondary" id="btn-editor-cancel">İptal</button>
       <button class="btn btn-primary" id="btn-editor-read">Okumaya Başla →</button>
@@ -2105,7 +2148,7 @@ function detectHeadings(rawText) {
   const lines = rawText.replace(/\r\n/g, '\n').split('\n');
   let wordIdx = 0;
 
-  const HEADING_RE = /^(CHAPTER|PART|SECTION|BÖLÜM|KISIM|BÖLÜM|BÖLÜM)\b/i;
+  const HEADING_RE = /^(CHAPTER|PART|SECTION|BÖLÜM|KISIM|GİRİŞ|ÖNSÖZ|SONUÇ|KAYNAKÇA|İÇİNDEKİLER|EKLER|ÖZET|ABSTRACT|SUNUŞ|TAKDIM|BAŞLANGIÇ|SONSÖZ)\b/i;
   const ROMAN_RE = /^[IVXLCDM]+[.:]?\s/;
 
   for (const raw of lines) {
