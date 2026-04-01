@@ -23,20 +23,6 @@
 <!-- epub.js -->
 <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js" defer></script>
 
-<!--
-  Google Drive Entegrasyonu:
-  Aşağıdaki Google API script'i Drive'dan dosya okuma için gereklidir.
-  Kullanmak için:
-  1. https://console.cloud.google.com adresine gidin
-  2. Yeni proje oluşturun
-  3. "Google Drive API" ve "Google Picker API" etkinleştirin
-  4. OAuth 2.0 Client ID oluşturun (Web application tipi)
-  5. API Key oluşturun
-  6. Aşağıdaki GOOGLE_CLIENT_ID ve GOOGLE_API_KEY değerlerini güncelleyin
--->
-<script src="https://apis.google.com/js/api.js" defer></script>
-<script src="https://accounts.google.com/gsi/client" defer></script>
-
 <style>
 /* ═══════════════════════════════════════════
    RESET & BASE
@@ -231,12 +217,18 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
    READ SCREEN
    ═══════════════════════════════════════════ */
 #read-screen{
-  justify-content:space-between;align-items:center;
+  justify-content:space-between;align-items:stretch;
   padding:1rem;
   padding-top:calc(.75rem + var(--safe-top));
   padding-bottom:calc(.75rem + var(--safe-bottom));
   user-select:none;-webkit-user-select:none;
-  position:relative;overflow:hidden;
+  position:relative;
+  overflow:hidden;
+  min-height:100vh;
+  min-height:100dvh;
+  box-sizing:border-box;
+  -webkit-touch-callout:none;
+  touch-action:pan-y pinch-zoom;
 }
 
 .read-topbar{
@@ -244,8 +236,12 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
   width:100%;max-width:800px;
   padding:.25rem 0;
   opacity:.7;transition:opacity .2s;
+  flex-shrink:0;
 }
 .read-topbar:hover{opacity:1}
+@media(max-width:600px){
+  .read-topbar{opacity:1;flex-wrap:wrap;gap:.35rem}
+}
 
 .read-stats{
   display:flex;gap:1rem;font-size:.75rem;
@@ -257,14 +253,19 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
 
 /* RSVP Display */
 .rsvp-container{
-  flex:1;display:flex;align-items:center;justify-content:center;
+  flex:1 1 auto;display:flex;align-items:center;justify-content:center;
   width:100%;max-width:800px;
   position:relative;
+  min-height:0;
+  overflow:hidden;
+  touch-action:manipulation;
 }
 .rsvp-focus-box{
   text-align:center;
-  padding:2rem;
-  min-width:280px;
+  padding:clamp(.75rem,3vw,2rem);
+  min-width:0;
+  width:100%;
+  max-width:100%;
   position:relative;
 }
 .rsvp-guides{
@@ -277,16 +278,30 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
   font-size:var(--rsvp-font-size);
   font-weight:400;
   letter-spacing:.02em;
-  white-space:nowrap;
-  line-height:1.4;
+  line-height:1.45;
   min-height:1.4em;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:.3em;
+  gap:.35em;
+  flex-wrap:wrap;
+  max-width:100%;
+  padding:0 .25rem;
+  box-sizing:border-box;
+  overflow-wrap:anywhere;
+  word-break:normal;
 }
 .rsvp-word .orp{color:var(--orp);font-weight:700}
-.rsvp-word-chunk{display:inline-flex;align-items:baseline}
+.rsvp-word-chunk{
+  display:inline-flex;
+  align-items:baseline;
+  white-space:nowrap;
+  max-width:100%;
+}
+@media(max-width:600px){
+  .rsvp-word{font-size:clamp(1.1rem,calc(var(--rsvp-font-size) * 0.85),var(--rsvp-font-size))}
+  .rsvp-word.heading{font-size:clamp(1rem,calc(var(--rsvp-font-size) * 0.95),calc(var(--rsvp-font-size) * 1.08))}
+}
 
 .rsvp-idle-msg{
   color:var(--text-secondary);font-size:1rem;
@@ -305,8 +320,10 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
   padding:0 1rem;
 }
 .context-viewer.visible{
-  max-height:240px;opacity:1;padding:.75rem 1rem;overflow-y:auto;
+  max-height:min(240px,32dvh);
+  opacity:1;padding:.75rem 1rem;overflow-y:auto;
   scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
 }
 .context-viewer-inner{
   font-family:var(--font-body);font-size:.85rem;
@@ -333,6 +350,7 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
 .progress-wrap{
   width:100%;max-width:800px;
   padding:.5rem 0;
+  flex-shrink:0;
 }
 .progress-bar{
   width:100%;height:4px;
@@ -364,6 +382,8 @@ h2{font-size:clamp(1.2rem,3vw,1.6rem)}
   width:100%;max-width:800px;
   display:flex;flex-direction:column;gap:.75rem;
   align-items:center;
+  flex-shrink:0;
+  padding-bottom:max(0px,env(safe-area-inset-bottom));
 }
 .controls-main{
   display:flex;align-items:center;gap:.75rem;
@@ -520,6 +540,12 @@ input[type=range]::-moz-range-thumb{
 .btn-music-inline:hover,.btn-music-inline:focus{background:var(--accent);color:#0D0D0D;border-color:var(--accent)}
 @media(max-width:600px){
   .btn-music-inline{display:inline-flex}
+}
+
+/* Okuma ekranı müzik (mobilde sabit panel gizli olduğu için) */
+#btn-music-read{display:none}
+@media(max-width:600px){
+  #btn-music-read{display:inline-flex!important}
 }
 
 /* Music drawer when opened from inline button */
@@ -960,10 +986,6 @@ input[type=range]::-moz-range-thumb{
   .page-strip-label{padding:0 .75rem .25rem;font-size:.6rem}
 }
 
-/* Google Drive status indicator */
-.gdrive-connected{color:#4CAF50}
-.gdrive-disconnected{color:var(--text-secondary)}
-
 /* ═══════════════════════════════════════════
    READING LIBRARY (HOME SCREEN)
    ═══════════════════════════════════════════ */
@@ -1116,9 +1138,6 @@ input[type=range]::-moz-range-thumb{
     <button class="btn btn-primary" id="btn-choose-file" aria-label="Dosya seç">
       <span aria-hidden="true">📂</span> Dosya Seç
     </button>
-    <button class="btn btn-secondary" id="btn-google-drive" aria-label="Google Drive'dan aç">
-      <span aria-hidden="true">☁️</span> Drive'dan Aç
-    </button>
   </div>
 
   <div class="divider"><span>veya metin yapıştırın</span></div>
@@ -1159,6 +1178,7 @@ input[type=range]::-moz-range-thumb{
       </div>
     </div>
     <div class="read-topbar-actions">
+      <button class="btn-icon btn-music-read" id="btn-music-read" aria-label="Arka plan müziği" title="Müzik">♪</button>
       <button class="btn-icon" id="btn-bookmark" aria-label="Yer imi ekle" title="Yer imi ekle">🔖</button>
       <button class="btn-icon" id="btn-bookmark-list" aria-label="Yer imleri" title="Yer imleri">📑</button>
       <button class="btn-icon" id="btn-fullscreen" aria-label="Tam ekran" title="Tam ekran">⛶</button>
@@ -1293,36 +1313,6 @@ input[type=range]::-moz-range-thumb{
       </div>
     </div>
 
-    <!-- Google Drive API -->
-    <div class="settings-section">
-      <h3>☁️ Google Drive Bağlantısı</h3>
-      <p style="font-size:.75rem;color:var(--text-secondary);margin-bottom:.75rem;line-height:1.5">
-        Drive'dan dosya açabilmek için Google Cloud Console'dan API anahtarları gereklidir.
-        <a href="https://console.cloud.google.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">console.cloud.google.com</a>
-        adresinden:
-      </p>
-      <ol style="font-size:.7rem;color:var(--text-secondary);margin-bottom:.75rem;padding-left:1.2rem;line-height:1.7">
-        <li>Yeni proje oluşturun</li>
-        <li>"Google Drive API" ve "Google Picker API" etkinleştirin</li>
-        <li>Kimlik Bilgileri &rarr; OAuth 2.0 Client ID (Web application) oluşturun</li>
-        <li>Kimlik Bilgileri &rarr; API Key oluşturun</li>
-        <li>Aşağıya yapıştırın ve kaydedin</li>
-      </ol>
-      <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:.5rem">
-        <div>
-          <label for="gdrive-client-id" style="font-size:.75rem;display:block;margin-bottom:.25rem;color:var(--text-secondary)">Client ID</label>
-          <input type="text" id="gdrive-client-id" placeholder="123456789.apps.googleusercontent.com" style="width:100%;padding:.5rem .75rem;background:var(--bg-secondary);color:var(--text);border:1px solid var(--glass-border);border-radius:var(--radius-sm);font-size:.8rem;font-family:monospace" aria-label="Google Client ID">
-        </div>
-        <div>
-          <label for="gdrive-api-key" style="font-size:.75rem;display:block;margin-bottom:.25rem;color:var(--text-secondary)">API Key</label>
-          <input type="text" id="gdrive-api-key" placeholder="AIzaSy..." style="width:100%;padding:.5rem .75rem;background:var(--bg-secondary);color:var(--text);border:1px solid var(--glass-border);border-radius:var(--radius-sm);font-size:.8rem;font-family:monospace" aria-label="Google API Key">
-        </div>
-        <button class="btn btn-primary" id="btn-save-gdrive" style="margin-top:.25rem;padding:.5rem 1rem;font-size:.85rem">
-          Kaydet ve Bağlan
-        </button>
-        <div id="gdrive-status" style="font-size:.75rem;margin-top:.25rem"></div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1428,12 +1418,15 @@ input[type=range]::-moz-range-thumb{
   <button class="music-toggle" id="music-toggle" aria-label="Müzik paneli">♪</button>
   <div class="music-drawer" id="music-drawer">
     <div class="music-category">
-      <div class="music-category-title">🎼 Klasik Müzik</div>
+      <div class="music-category-title">🎼 Klasik (MP3)</div>
+      <p style="font-size:.65rem;color:var(--text-secondary);margin:-.25rem 0 .5rem;line-height:1.35">SoundHelix örnek parçaları — iPhone/Android uyumlu gerçek enstrüman sesi.</p>
       <div class="music-options">
-        <button class="music-opt" data-sound="bach">Bach Prelüd</button>
-        <button class="music-opt" data-sound="debussy">Debussy</button>
-        <button class="music-opt" data-sound="satie">Satie</button>
-        <button class="music-opt" data-sound="chopin">Chopin</button>
+        <button class="music-opt" data-sound="bach">Barok tarzı</button>
+        <button class="music-opt" data-sound="debussy">Ezgili piyano</button>
+        <button class="music-opt" data-sound="satie">Minimal piyano</button>
+        <button class="music-opt" data-sound="chopin">Romantik</button>
+        <button class="music-opt" data-sound="mozart">Neşeli klasik</button>
+        <button class="music-opt" data-sound="vivaldi">Yaylı / konçerto</button>
       </div>
     </div>
     <div class="music-category">
@@ -1475,12 +1468,15 @@ input[type=range]::-moz-range-thumb{
 <div class="music-drawer-backdrop" id="music-drawer-backdrop"></div>
 <div class="music-drawer-inline" id="music-drawer-inline">
   <div class="music-category">
-    <div class="music-category-title">🎼 Klasik Müzik</div>
+    <div class="music-category-title">🎼 Klasik (MP3)</div>
+    <p style="font-size:.65rem;color:var(--text-secondary);margin:-.25rem 0 .5rem;line-height:1.35">SoundHelix örnek parçaları — telefonda çalar.</p>
     <div class="music-options">
-      <button class="music-opt" data-sound="bach">Bach Prelüd</button>
-      <button class="music-opt" data-sound="debussy">Debussy</button>
-      <button class="music-opt" data-sound="satie">Satie</button>
-      <button class="music-opt" data-sound="chopin">Chopin</button>
+      <button class="music-opt" data-sound="bach">Barok tarzı</button>
+      <button class="music-opt" data-sound="debussy">Ezgili piyano</button>
+      <button class="music-opt" data-sound="satie">Minimal piyano</button>
+      <button class="music-opt" data-sound="chopin">Romantik</button>
+      <button class="music-opt" data-sound="mozart">Neşeli klasik</button>
+      <button class="music-opt" data-sound="vivaldi">Yaylı / konçerto</button>
     </div>
   </div>
   <div class="music-category">
@@ -1517,6 +1513,8 @@ input[type=range]::-moz-range-thumb{
   </div>
 </div>
 
+<audio id="bgm-stream" preload="none" playsinline webkit-playsinline loop style="display:none" aria-hidden="true"></audio>
+
 <!-- ═══════════════════════════════════════════
      JAVASCRIPT
      ═══════════════════════════════════════════ -->
@@ -1527,11 +1525,6 @@ input[type=range]::-moz-range-thumb{
 /* ─────────────────────────────────────────────
    CONFIG & CONSTANTS
    ───────────────────────────────────────────── */
-let GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
-let GOOGLE_API_KEY   = 'YOUR_GOOGLE_API_KEY';
-const GOOGLE_SCOPES    = 'https://www.googleapis.com/auth/drive.readonly';
-const LS_GDRIVE = 'rsvp_gdrive';
-
 const PUNCTUATION_RE = /[.!?;:,…—–\-\u0964\u0965]/;
 const SENTENCE_END_RE = /[.!?…]$/;
 const LS_SETTINGS  = 'rsvp_settings';
@@ -1604,6 +1597,28 @@ const musicDrawer    = $('#music-drawer');
 const musicVolume    = $('#music-volume');
 const volumeValEl    = $('#volume-val');
 const bgCustom       = $('#bg-custom');
+const bgmStreamEl    = $('#bgm-stream');
+
+/* Klasik: gerçek MP3 (iOS Safari uyumlu). SoundHelix açık örnek dosyaları. */
+const STREAM_MP3 = {
+  bach:    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  debussy: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+  satie:   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+  chopin:  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+  mozart:  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+  vivaldi: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+};
+
+function isStreamSound(name) {
+  return name && Object.prototype.hasOwnProperty.call(STREAM_MP3, name);
+}
+
+function closeInlineMusicDrawer() {
+  const d = $('#music-drawer-inline');
+  const b = $('#music-drawer-backdrop');
+  if (d) d.classList.remove('open');
+  if (b) b.classList.remove('open');
+}
 
 /* ─────────────────────────────────────────────
    UTILITY FUNCTIONS
@@ -1677,41 +1692,6 @@ function saveAudioPref() {
       muted: state.audio.muted,
     }));
   } catch(e) {}
-}
-
-function loadGDriveCredentials() {
-  try {
-    const raw = localStorage.getItem(LS_GDRIVE);
-    if (raw) {
-      const creds = JSON.parse(raw);
-      if (creds.clientId) GOOGLE_CLIENT_ID = creds.clientId;
-      if (creds.apiKey) GOOGLE_API_KEY = creds.apiKey;
-    }
-  } catch(e) {}
-}
-
-function saveGDriveCredentials(clientId, apiKey) {
-  GOOGLE_CLIENT_ID = clientId;
-  GOOGLE_API_KEY = apiKey;
-  try {
-    localStorage.setItem(LS_GDRIVE, JSON.stringify({ clientId, apiKey }));
-  } catch(e) {}
-}
-
-function updateGDriveStatusUI() {
-  const statusEl = $('#gdrive-status');
-  const clientInput = $('#gdrive-client-id');
-  const keyInput = $('#gdrive-api-key');
-  if (!statusEl) return;
-
-  if (clientInput) clientInput.value = (GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID') ? GOOGLE_CLIENT_ID : '';
-  if (keyInput) keyInput.value = (GOOGLE_API_KEY !== 'YOUR_GOOGLE_API_KEY') ? GOOGLE_API_KEY : '';
-
-  if (GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID' && GOOGLE_API_KEY !== 'YOUR_GOOGLE_API_KEY') {
-    statusEl.innerHTML = '<span class="gdrive-connected">● Bağlı</span> — Drive\'dan Aç butonu aktif';
-  } else {
-    statusEl.innerHTML = '<span class="gdrive-disconnected">○ Bağlı değil</span> — Yukarıdaki anahtarları girin';
-  }
 }
 
 /* ─────────────────────────────────────────────
@@ -2274,6 +2254,7 @@ function updateFileNameUI() {
    ROUTER
    ───────────────────────────────────────────── */
 function navigate(screen) {
+  closeInlineMusicDrawer();
   $$('.screen').forEach(s => s.classList.remove('active'));
   if (screen === 'read') {
     readScreen.classList.add('active');
@@ -2720,6 +2701,7 @@ function updateContextViewer(show) {
 
 function startRSVP() {
   if (!state.words.length) return;
+  resumeStreamAfterGesture();
   if (state.currentIndex >= state.words.length) {
     state.currentIndex = 0;
   }
@@ -2845,7 +2827,6 @@ function initAudio() {
     masterGain = audioCtx.createGain();
     masterGain.gain.value = (state.audio.muted ? 0 : state.audio.volume / 100) * 0.5;
     masterGain.connect(audioCtx.destination);
-    console.log('AudioContext başarıyla oluşturuldu, state:', audioCtx.state);
   } catch(e) {
     console.error('AudioContext oluşturulamadı:', e);
     audioCtx = null;
@@ -2855,11 +2836,14 @@ function initAudio() {
 
 function setAudioVolume(vol) {
   state.audio.volume = vol;
-  if (masterGain) {
+  if (masterGain && audioCtx) {
     masterGain.gain.setTargetAtTime(
       (state.audio.muted ? 0 : vol / 100) * 0.5,
       audioCtx.currentTime, 0.05
     );
+  }
+  if (bgmStreamEl && bgmStreamEl.src) {
+    bgmStreamEl.volume = (state.audio.muted ? 0 : vol / 100) * 0.85;
   }
   saveAudioPref();
 }
@@ -2876,6 +2860,9 @@ function toggleMute() {
       audioCtx.currentTime, 0.05
     );
   }
+  if (bgmStreamEl && bgmStreamEl.src) {
+    bgmStreamEl.volume = state.audio.muted ? 0 : (state.audio.volume / 100) * 0.85;
+  }
   saveAudioPref();
 }
 
@@ -2885,6 +2872,13 @@ function stopAllAudio() {
     try { n.disconnect(); } catch(e) {}
   });
   activeNodes = [];
+  if (bgmStreamEl) {
+    try {
+      bgmStreamEl.pause();
+      bgmStreamEl.removeAttribute('src');
+      bgmStreamEl.load();
+    } catch(e) {}
+  }
 }
 
 function createNoiseBuffer(type, seconds) {
@@ -3044,98 +3038,6 @@ const soundGenerators = {
   brownnoise() {
     playNoise('brown', null);
   },
-  bach() {
-    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 392.00, 329.63, 261.63];
-    let t = audioCtx.currentTime;
-    function playLoop() {
-      notes.forEach((freq, i) => {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'triangle';
-        osc.frequency.value = freq;
-        const g = audioCtx.createGain();
-        g.gain.setValueAtTime(0, t + i * 0.5);
-        g.gain.linearRampToValueAtTime(0.08, t + i * 0.5 + 0.05);
-        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.5 + 0.48);
-        osc.connect(g); g.connect(masterGain);
-        osc.start(t + i * 0.5);
-        osc.stop(t + i * 0.5 + 0.5);
-        activeNodes.push(osc);
-      });
-      t += notes.length * 0.5;
-      if (state.audio.currentSound === 'bach') {
-        setTimeout(playLoop, (notes.length * 0.5 - 0.1) * 1000);
-      }
-    }
-    playLoop();
-  },
-  debussy() {
-    const chords = [[261.63, 329.63, 392.00], [293.66, 369.99, 440.00], [246.94, 311.13, 369.99]];
-    let idx = 0;
-    function playChord() {
-      if (state.audio.currentSound !== 'debussy') return;
-      const chord = chords[idx % chords.length];
-      chord.forEach(freq => {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        const g = audioCtx.createGain();
-        const t = audioCtx.currentTime;
-        g.gain.setValueAtTime(0, t);
-        g.gain.linearRampToValueAtTime(0.06, t + 0.3);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 3.5);
-        osc.connect(g); g.connect(masterGain);
-        osc.start(t); osc.stop(t + 3.5);
-        activeNodes.push(osc);
-      });
-      idx++;
-      setTimeout(playChord, 3200);
-    }
-    playChord();
-  },
-  satie() {
-    const melody = [329.63, 392.00, 440.00, 392.00, 329.63, 293.66, 261.63];
-    let mIdx = 0;
-    function playNote() {
-      if (state.audio.currentSound !== 'satie') return;
-      const freq = melody[mIdx % melody.length];
-      const osc = audioCtx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      const g = audioCtx.createGain();
-      const t = audioCtx.currentTime;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.07, t + 0.2);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 2.8);
-      osc.connect(g); g.connect(masterGain);
-      osc.start(t); osc.stop(t + 3);
-      activeNodes.push(osc);
-      mIdx++;
-      setTimeout(playNote, 2000 + Math.random() * 800);
-    }
-    playNote();
-  },
-  chopin() {
-    const notes = [261.63, 311.13, 369.99, 440.00, 523.25, 440.00, 369.99, 311.13];
-    let nIdx = 0;
-    function playNote() {
-      if (state.audio.currentSound !== 'chopin') return;
-      const freq = notes[nIdx % notes.length];
-      const osc = audioCtx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      const g = audioCtx.createGain();
-      const t = audioCtx.currentTime;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.06, t + 0.15);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 2.0);
-      osc.connect(g); g.connect(masterGain);
-      osc.start(t); osc.stop(t + 2.0);
-      activeNodes.push(osc);
-      nIdx++;
-      setTimeout(playNote, 600 + Math.random() * 400);
-    }
-    playNote();
-  },
   bowl() {
     function strike() {
       if (state.audio.currentSound !== 'bowl') return;
@@ -3182,9 +3084,52 @@ const soundGenerators = {
 };
 
 async function playSound(name) {
+  if (isStreamSound(name)) {
+    try {
+      initAudio();
+      if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+    } catch(e) {}
+
+    stopAllAudio();
+
+    if (state.audio.currentSound === name) {
+      state.audio.currentSound = null;
+      $$('.music-opt').forEach(b => b.classList.remove('active'));
+      saveAudioPref();
+      return;
+    }
+
+    state.audio.currentSound = name;
+    $$('.music-opt').forEach(b => {
+      b.classList.toggle('active', b.dataset.sound === name);
+    });
+
+    if (!bgmStreamEl) {
+      showToast('Ses öğesi yüklenemedi');
+      return;
+    }
+
+    bgmStreamEl.loop = true;
+    bgmStreamEl.src = STREAM_MP3[name];
+    bgmStreamEl.volume = (state.audio.muted ? 0 : state.audio.volume / 100) * 0.85;
+
+    bgmStreamEl.play().catch(() => {
+      showToast('Müzik: önce ▶ ile okumayı başlatın veya tekrar parçaya dokunun');
+    });
+
+    bgmStreamEl.onerror = () => {
+      showToast('Parça yüklenemedi (ağ)');
+      state.audio.currentSound = null;
+      $$('.music-opt').forEach(b => b.classList.remove('active'));
+    };
+
+    saveAudioPref();
+    return;
+  }
+
   try {
     initAudio();
-    if (audioCtx.state === 'suspended') {
+    if (audioCtx && audioCtx.state === 'suspended') {
       await audioCtx.resume();
     }
   } catch(e) {
@@ -3218,105 +3163,14 @@ async function playSound(name) {
   saveAudioPref();
 }
 
-/* ─────────────────────────────────────────────
-   GOOGLE DRIVE INTEGRATION
-   ───────────────────────────────────────────── */
-let gapiReady = false;
-let gisReady = false;
-let tokenClient = null;
-
-function initGoogleDrive() {
-  if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID' || GOOGLE_API_KEY === 'YOUR_GOOGLE_API_KEY') {
-    return;
-  }
-
-  if (typeof gapi !== 'undefined') {
-    gapi.load('client:picker', async () => {
-      try {
-        await gapi.client.init({ apiKey: GOOGLE_API_KEY });
-        await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
-        gapiReady = true;
-      } catch(e) {
-        console.warn('Google API init failed:', e);
-      }
-    });
-  }
-
-  if (typeof google !== 'undefined' && google.accounts) {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: GOOGLE_SCOPES,
-      callback: (response) => {
-        if (response.access_token) {
-          gisReady = true;
-          openGooglePicker(response.access_token);
-        }
-      },
-    });
-  }
-}
-
-function openGoogleDrive() {
-  if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID' || GOOGLE_API_KEY === 'YOUR_GOOGLE_API_KEY') {
-    showToast('Google Drive bağlı değil — Ayarlar panelinden API anahtarlarını girin');
-    settingsOvl.classList.add('active');
-    window.location.hash = '#settings';
-    setTimeout(() => {
-      const el = $('#gdrive-client-id');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
-    return;
-  }
-
-  if (!gapiReady || !tokenClient) {
-    showToast('Google API başlatılıyor, tekrar deneyin...');
-    initGoogleDrive();
-    return;
-  }
-
-  tokenClient.requestAccessToken();
-}
-
-function openGooglePicker(accessToken) {
-  if (!gapiReady) {
-    showToast('Google API hazır değil');
-    return;
-  }
-
-  const view = new google.picker.PickerBuilder()
-    .addView(new google.picker.DocsView()
-      .setMimeTypes('text/plain,application/epub+zip,application/pdf')
-      .setMode(google.picker.DocsViewMode.LIST))
-    .setOAuthToken(accessToken)
-    .setDeveloperKey(GOOGLE_API_KEY)
-    .setCallback(handlePickerResult)
-    .build();
-  view.setVisible(true);
-}
-
-async function handlePickerResult(data) {
-  if (data.action !== google.picker.Action.PICKED) return;
-  const fileId = data.docs[0].id;
-  const fileName = data.docs[0].name;
-  const mimeType = data.docs[0].mimeType;
-
-  showToast('Drive\'dan indiriliyor: ' + fileName);
-  state.fileName = fileName;
-
+function resumeStreamAfterGesture() {
   try {
-    const response = await gapi.client.drive.files.get({
-      fileId: fileId,
-      alt: 'media',
-    });
-
-    if (mimeType === 'text/plain') {
-      loadText(response.body);
-    } else {
-      showToast('Bu dosya türü Drive\'dan henüz desteklenmiyor');
-    }
-  } catch(e) {
-    console.error('Drive download error:', e);
-    showToast('Drive dosyası indirilemedi');
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e) {}
+  if (bgmStreamEl && isStreamSound(state.audio.currentSound) && bgmStreamEl.src && !state.audio.muted) {
+    bgmStreamEl.volume = (state.audio.volume / 100) * 0.85;
+    bgmStreamEl.play().catch(() => {});
   }
 }
 
@@ -3358,34 +3212,6 @@ $('#btn-load-text').addEventListener('click', () => {
   if (!text) { showToast('Lütfen metin girin'); return; }
   state.fileName = 'Manuel metin';
   loadText(text);
-});
-
-$('#btn-google-drive').addEventListener('click', openGoogleDrive);
-
-/* ── Google Drive Settings Save ── */
-$('#btn-save-gdrive').addEventListener('click', () => {
-  const clientId = $('#gdrive-client-id').value.trim();
-  const apiKey = $('#gdrive-api-key').value.trim();
-
-  if (!clientId || !apiKey) {
-    showToast('Lütfen hem Client ID hem de API Key girin');
-    return;
-  }
-
-  if (!clientId.includes('.apps.googleusercontent.com')) {
-    showToast('Client ID formatı geçersiz (*.apps.googleusercontent.com olmalı)');
-    return;
-  }
-
-  if (!apiKey.startsWith('AIza')) {
-    showToast('API Key formatı geçersiz (AIza... ile başlamalı)');
-    return;
-  }
-
-  saveGDriveCredentials(clientId, apiKey);
-  updateGDriveStatusUI();
-  showToast('Google Drive anahtarları kaydedildi! Bağlantı kuruluyor...');
-  initGoogleDrive();
 });
 
 /* ── PDF Text Editor Events ── */
@@ -3607,38 +3433,43 @@ const inlineBackdrop = $('#music-drawer-backdrop');
 const inlineVolume = $('#music-volume-inline');
 const inlineVolVal = $('#volume-val-inline');
 
-function closeInlineDrawer() {
-  if (inlineDrawer) inlineDrawer.classList.remove('open');
-  if (inlineBackdrop) inlineBackdrop.classList.remove('open');
+function positionInlineMusicDrawer(anchorEl) {
+  if (!inlineDrawer || !anchorEl) return;
+  const btnRect = anchorEl.getBoundingClientRect();
+  inlineDrawer.style.bottom = (window.innerHeight - btnRect.top + 8) + 'px';
+}
+
+function openInlineMusicDrawer(anchorEl) {
+  if (!inlineDrawer || !inlineBackdrop || !anchorEl) return;
+  positionInlineMusicDrawer(anchorEl);
+  inlineDrawer.classList.add('open');
+  inlineBackdrop.classList.add('open');
+  inlineDrawer.querySelectorAll('.music-opt').forEach(b => {
+    b.classList.toggle('active', b.dataset.sound === state.audio.currentSound);
+  });
+  if (inlineVolume) inlineVolume.value = state.audio.volume;
+  if (inlineVolVal) inlineVolVal.textContent = state.audio.volume;
+  const im = $('#music-mute-inline');
+  if (im) im.textContent = state.audio.muted ? '🔇' : '🔊';
 }
 
 if ($('#btn-music-home')) {
   $('#btn-music-home').addEventListener('click', () => {
-    const isOpen = inlineDrawer.classList.contains('open');
-    if (isOpen) {
-      closeInlineDrawer();
-    } else {
-      // Position the drawer centered above the button
-      const btnRect = $('#btn-music-home').getBoundingClientRect();
-      inlineDrawer.style.bottom = (window.innerHeight - btnRect.top + 8) + 'px';
-      inlineDrawer.classList.add('open');
-      inlineBackdrop.classList.add('open');
-      // Sync active states
-      inlineDrawer.querySelectorAll('.music-opt').forEach(b => {
-        b.classList.toggle('active', b.dataset.sound === state.audio.currentSound);
-      });
-      // Sync volume
-      if (inlineVolume) inlineVolume.value = state.audio.volume;
-      if (inlineVolVal) inlineVolVal.textContent = state.audio.volume;
-      if ($('#music-mute-inline')) {
-        $('#music-mute-inline').textContent = state.audio.muted ? '🔇' : '🔊';
-      }
-    }
+    if (inlineDrawer.classList.contains('open')) closeInlineMusicDrawer();
+    else openInlineMusicDrawer($('#btn-music-home'));
+  });
+}
+
+const btnMusicRead = $('#btn-music-read');
+if (btnMusicRead) {
+  btnMusicRead.addEventListener('click', () => {
+    if (inlineDrawer.classList.contains('open')) closeInlineMusicDrawer();
+    else openInlineMusicDrawer(btnMusicRead);
   });
 }
 
 if (inlineBackdrop) {
-  inlineBackdrop.addEventListener('click', closeInlineDrawer);
+  inlineBackdrop.addEventListener('click', closeInlineMusicDrawer);
 }
 
 // Inline drawer sound buttons
@@ -3710,6 +3541,10 @@ document.addEventListener('keydown', (e) => {
       }
       break;
     case 'Escape':
+      if (inlineDrawer && inlineDrawer.classList.contains('open')) {
+        closeInlineMusicDrawer();
+        break;
+      }
       if (settingsOvl.classList.contains('active')) {
         settingsOvl.classList.remove('active');
         window.location.hash = '#read';
@@ -3770,6 +3605,8 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     savePosition();
     saveStats();
+  } else {
+    resumeStreamAfterGesture();
   }
 });
 
@@ -3789,14 +3626,10 @@ function init() {
   loadSettings();
   loadStats();
   loadAudioPref();
-  loadGDriveCredentials();
   applyAllSettings();
-  updateGDriveStatusUI();
   renderLibrary();
   handleHash();
   startStatsUpdate();
-
-  setTimeout(initGoogleDrive, 1000);
 
   if (state.audio.currentSound && !state.audio.muted) {
     $$('.music-opt').forEach(b => {
