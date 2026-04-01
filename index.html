@@ -1418,15 +1418,15 @@ input[type=range]::-moz-range-thumb{
   <button class="music-toggle" id="music-toggle" aria-label="Müzik paneli">♪</button>
   <div class="music-drawer" id="music-drawer">
     <div class="music-category">
-      <div class="music-category-title">🎼 Klasik (MP3)</div>
-      <p style="font-size:.65rem;color:var(--text-secondary);margin:-.25rem 0 .5rem;line-height:1.35">SoundHelix örnek parçaları — iPhone/Android uyumlu gerçek enstrüman sesi.</p>
+      <div class="music-category-title">🎼 Klasik Müzik</div>
+      <p style="font-size:.65rem;color:var(--text-secondary);margin:-.25rem 0 .5rem;line-height:1.35">İnternet bağlantısı gerektirir · Public domain</p>
       <div class="music-options">
-        <button class="music-opt" data-sound="bach">Barok tarzı</button>
-        <button class="music-opt" data-sound="debussy">Ezgili piyano</button>
-        <button class="music-opt" data-sound="satie">Minimal piyano</button>
-        <button class="music-opt" data-sound="chopin">Romantik</button>
-        <button class="music-opt" data-sound="mozart">Neşeli klasik</button>
-        <button class="music-opt" data-sound="vivaldi">Yaylı / konçerto</button>
+        <button class="music-opt" data-sound="bach">Bach</button>
+        <button class="music-opt" data-sound="beethoven">Beethoven</button>
+        <button class="music-opt" data-sound="chopin">Chopin</button>
+        <button class="music-opt" data-sound="mozart">Mozart</button>
+        <button class="music-opt" data-sound="debussy">Debussy</button>
+        <button class="music-opt" data-sound="vivaldi">Vivaldi</button>
       </div>
     </div>
     <div class="music-category">
@@ -1448,6 +1448,14 @@ input[type=range]::-moz-range-thumb{
       </div>
     </div>
     <div class="music-category">
+      <div class="music-category-title">🌙 Gece / Doğa</div>
+      <div class="music-options">
+        <button class="music-opt" data-sound="storm">Fırtına</button>
+        <button class="music-opt" data-sound="night">Gece</button>
+        <button class="music-opt" data-sound="fire">Kamp Ateşi</button>
+      </div>
+    </div>
+    <div class="music-category">
       <div class="music-category-title">🧘 Meditasyon</div>
       <div class="music-options">
         <button class="music-opt" data-sound="bowl">Tibet Çanağı</button>
@@ -1458,8 +1466,8 @@ input[type=range]::-moz-range-thumb{
     </div>
     <div class="music-volume">
       <button class="music-mute" id="music-mute" aria-label="Sessize al">🔊</button>
-      <input type="range" id="music-volume" min="0" max="100" value="40" aria-label="Ses seviyesi">
-      <span style="font-size:.75rem;min-width:2em;text-align:right" id="volume-val">40</span>
+      <input type="range" id="music-volume" min="0" max="100" value="70" aria-label="Ses seviyesi">
+      <span style="font-size:.75rem;min-width:2em;text-align:right" id="volume-val">70</span>
     </div>
   </div>
 </div>
@@ -1468,15 +1476,15 @@ input[type=range]::-moz-range-thumb{
 <div class="music-drawer-backdrop" id="music-drawer-backdrop"></div>
 <div class="music-drawer-inline" id="music-drawer-inline">
   <div class="music-category">
-    <div class="music-category-title">🎼 Klasik (MP3)</div>
-    <p style="font-size:.65rem;color:var(--text-secondary);margin:-.25rem 0 .5rem;line-height:1.35">SoundHelix örnek parçaları — telefonda çalar.</p>
+    <div class="music-category-title">🎼 Klasik Müzik</div>
+    <p style="font-size:.65rem;color:var(--text-secondary);margin:-.25rem 0 .5rem;line-height:1.35">İnternet bağlantısı gerektirir · Public domain</p>
     <div class="music-options">
-      <button class="music-opt" data-sound="bach">Barok tarzı</button>
-      <button class="music-opt" data-sound="debussy">Ezgili piyano</button>
-      <button class="music-opt" data-sound="satie">Minimal piyano</button>
-      <button class="music-opt" data-sound="chopin">Romantik</button>
-      <button class="music-opt" data-sound="mozart">Neşeli klasik</button>
-      <button class="music-opt" data-sound="vivaldi">Yaylı / konçerto</button>
+      <button class="music-opt" data-sound="bach">Bach</button>
+      <button class="music-opt" data-sound="beethoven">Beethoven</button>
+      <button class="music-opt" data-sound="chopin">Chopin</button>
+      <button class="music-opt" data-sound="mozart">Mozart</button>
+      <button class="music-opt" data-sound="debussy">Debussy</button>
+      <button class="music-opt" data-sound="vivaldi">Vivaldi</button>
     </div>
   </div>
   <div class="music-category">
@@ -1498,6 +1506,14 @@ input[type=range]::-moz-range-thumb{
     </div>
   </div>
   <div class="music-category">
+    <div class="music-category-title">🌙 Gece / Doğa</div>
+    <div class="music-options">
+      <button class="music-opt" data-sound="storm">Fırtına</button>
+      <button class="music-opt" data-sound="night">Gece</button>
+      <button class="music-opt" data-sound="fire">Kamp Ateşi</button>
+    </div>
+  </div>
+  <div class="music-category">
     <div class="music-category-title">🧘 Meditasyon</div>
     <div class="music-options">
       <button class="music-opt" data-sound="bowl">Tibet Çanağı</button>
@@ -1508,12 +1524,12 @@ input[type=range]::-moz-range-thumb{
   </div>
   <div class="music-volume">
     <button class="music-mute" id="music-mute-inline" aria-label="Sessize al">🔊</button>
-    <input type="range" id="music-volume-inline" min="0" max="100" value="40" aria-label="Ses seviyesi">
-    <span style="font-size:.75rem;min-width:2em;text-align:right" id="volume-val-inline">40</span>
+    <input type="range" id="music-volume-inline" min="0" max="100" value="70" aria-label="Ses seviyesi">
+    <span style="font-size:.75rem;min-width:2em;text-align:right" id="volume-val-inline">70</span>
   </div>
 </div>
 
-<audio id="bgm-stream" preload="none" playsinline webkit-playsinline loop style="display:none" aria-hidden="true"></audio>
+<audio id="bgm-stream" preload="metadata" playsinline webkit-playsinline loop style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0;clip:rect(0,0,0,0)" aria-hidden="true"></audio>
 
 <!-- ═══════════════════════════════════════════
      JAVASCRIPT
@@ -1562,7 +1578,7 @@ const state = {
 
   audio: {
     currentSound: null,
-    volume: 40,
+    volume: 70,
     muted: false,
   },
 };
@@ -1599,18 +1615,57 @@ const volumeValEl    = $('#volume-val');
 const bgCustom       = $('#bg-custom');
 const bgmStreamEl    = $('#bgm-stream');
 
-/* Klasik: gerçek MP3 (iOS Safari uyumlu). SoundHelix açık örnek dosyaları. */
-const STREAM_MP3 = {
-  bach:    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-  debussy: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-  satie:   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-  chopin:  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-  mozart:  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
-  vivaldi: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+/* Klasik müzik: public domain stream URL'leri (internet bağlantısı gerektirir) */
+const STREAM_URLS = {
+  bach:      'https://archive.org/download/MuseScore_Audio_Exports/Bach_-_Air_on_the_G_String.mp3',
+  beethoven: 'https://archive.org/download/beethoven_moonlight_sonata_1/moonlight_sonata_1.mp3',
+  chopin:    'https://archive.org/download/chopin_nocturne_op9_no2/chopin_nocturne_op9_no2.mp3',
+  mozart:    'https://archive.org/download/mozart_eine_kleine_nachtmusik/eine_kleine_nachtmusik_1.mp3',
+  debussy:   'https://archive.org/download/debussy_clair_de_lune/debussy_clair_de_lune.mp3',
+  vivaldi:   'https://archive.org/download/vivaldi_four_seasons_spring/vivaldi_spring_1.mp3',
 };
 
+const PROC_AUDIO_GAIN = 0.88;
+
 function isStreamSound(name) {
-  return name && Object.prototype.hasOwnProperty.call(STREAM_MP3, name);
+  return name && Object.prototype.hasOwnProperty.call(STREAM_URLS, name);
+}
+
+function streamVolume() {
+  if (state.audio.muted) return 0;
+  return Math.min(1, state.audio.volume / 100);
+}
+
+function playBgmRobust() {
+  if (!bgmStreamEl) return;
+  bgmStreamEl.volume = streamVolume();
+  const p = bgmStreamEl.play();
+  if (!p || typeof p.then !== 'function') return;
+  p.catch(() => {
+    try {
+      bgmStreamEl.muted = true;
+      const p2 = bgmStreamEl.play();
+      if (p2 && typeof p2.then === 'function') {
+        p2.then(() => {
+          bgmStreamEl.muted = false;
+          bgmStreamEl.volume = streamVolume();
+        }).catch(() => {
+          bgmStreamEl.muted = false;
+          showToast('Ses açılamadı: telefon sessiz anahtarı / tarayıcı sesine bakın');
+        });
+      }
+    } catch(e) {
+      bgmStreamEl.muted = false;
+      showToast('Ses çalınamadı — sayfayı yenileyip tekrar deneyin');
+    }
+  });
+}
+
+function unlockWebAudioFromGesture() {
+  try {
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e) {}
 }
 
 function closeInlineMusicDrawer() {
@@ -2825,7 +2880,7 @@ function initAudio() {
     }
     audioCtx = new AudioCtx();
     masterGain = audioCtx.createGain();
-    masterGain.gain.value = (state.audio.muted ? 0 : state.audio.volume / 100) * 0.5;
+    masterGain.gain.value = (state.audio.muted ? 0 : state.audio.volume / 100) * PROC_AUDIO_GAIN;
     masterGain.connect(audioCtx.destination);
   } catch(e) {
     console.error('AudioContext oluşturulamadı:', e);
@@ -2838,12 +2893,12 @@ function setAudioVolume(vol) {
   state.audio.volume = vol;
   if (masterGain && audioCtx) {
     masterGain.gain.setTargetAtTime(
-      (state.audio.muted ? 0 : vol / 100) * 0.5,
+      (state.audio.muted ? 0 : vol / 100) * PROC_AUDIO_GAIN,
       audioCtx.currentTime, 0.05
     );
   }
   if (bgmStreamEl && bgmStreamEl.src) {
-    bgmStreamEl.volume = (state.audio.muted ? 0 : vol / 100) * 0.85;
+    bgmStreamEl.volume = streamVolume();
   }
   saveAudioPref();
 }
@@ -2856,12 +2911,12 @@ function toggleMute() {
   if (inlineMuteEl) inlineMuteEl.textContent = icon;
   if (masterGain && audioCtx) {
     masterGain.gain.setTargetAtTime(
-      state.audio.muted ? 0 : (state.audio.volume / 100) * 0.5,
+      state.audio.muted ? 0 : (state.audio.volume / 100) * PROC_AUDIO_GAIN,
       audioCtx.currentTime, 0.05
     );
   }
   if (bgmStreamEl && bgmStreamEl.src) {
-    bgmStreamEl.volume = state.audio.muted ? 0 : (state.audio.volume / 100) * 0.85;
+    bgmStreamEl.volume = streamVolume();
   }
   saveAudioPref();
 }
@@ -3012,25 +3067,22 @@ const soundGenerators = {
     playNoise('pink', 'bandpass', 1500, 0.3);
   },
   lofi() {
-    playNoise('pink', 'lowpass', 2000, 0.5);
-    const lfo = audioCtx.createOscillator();
-    lfo.frequency.value = 0.25;
-    const lfoG = audioCtx.createGain();
-    lfoG.gain.value = 100;
-    lfo.connect(lfoG);
-
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 1500;
-    lfoG.connect(filter.frequency);
-
+    // Yumuşak vinyl crackle + alçak frekanslı ortam
+    playNoise('brown', 'lowpass', 800, 0.6);
     const src = audioCtx.createBufferSource();
-    src.buffer = createNoiseBuffer('pink', 8);
+    src.buffer = createNoiseBuffer('white', 8);
     src.loop = true;
-    src.connect(filter);
-    filter.connect(masterGain);
-    src.start(); lfo.start();
-    activeNodes.push(src, lfo);
+    const crackleFilter = audioCtx.createBiquadFilter();
+    crackleFilter.type = 'bandpass';
+    crackleFilter.frequency.value = 4000;
+    crackleFilter.Q.value = 0.5;
+    const crackleGain = audioCtx.createGain();
+    crackleGain.gain.value = 0.018;
+    src.connect(crackleFilter);
+    crackleFilter.connect(crackleGain);
+    crackleGain.connect(masterGain);
+    src.start();
+    activeNodes.push(src);
   },
   whitenoise() {
     playNoise('white', 'lowpass', 8000);
@@ -3038,23 +3090,94 @@ const soundGenerators = {
   brownnoise() {
     playNoise('brown', null);
   },
+  storm() {
+    // Fırtına: güçlü rüzgar + yağmur + uzak gök gürültüsü
+    playNoise('brown', 'lowpass', 500, 0.4);
+    playNoise('white', 'bandpass', 1200, 0.6);
+    playLFONoise('brown', 0.05, 600, 400);
+    // Periyodik gök gürültüsü
+    function thunder() {
+      if (state.audio.currentSound !== 'storm') return;
+      const delay = 8000 + Math.random() * 15000;
+      setTimeout(() => {
+        if (state.audio.currentSound !== 'storm') return;
+        const src2 = audioCtx.createBufferSource();
+        src2.buffer = createNoiseBuffer('brown', 3);
+        const f = audioCtx.createBiquadFilter();
+        f.type = 'lowpass'; f.frequency.value = 300;
+        const g = audioCtx.createGain();
+        const t = audioCtx.currentTime;
+        g.gain.setValueAtTime(0.5, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 3);
+        src2.connect(f); f.connect(g); g.connect(masterGain);
+        src2.start(t); src2.stop(t + 3);
+        activeNodes.push(src2);
+        thunder();
+      }, delay);
+    }
+    thunder();
+  },
+  night() {
+    // Gece sesleri: cırcır böcekleri + hafif rüzgar
+    playNoise('pink', 'highpass', 5000, 0.2);
+    playNoise('brown', 'lowpass', 300, 0.3);
+    // Cırcır böceği efekti
+    function chirp() {
+      if (state.audio.currentSound !== 'night') return;
+      const t = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.value = 3800 + Math.random() * 400;
+      const g = audioCtx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.018, t + 0.01);
+      g.gain.linearRampToValueAtTime(0, t + 0.08);
+      osc.connect(g); g.connect(masterGain);
+      osc.start(t); osc.stop(t + 0.1);
+      activeNodes.push(osc);
+      setTimeout(chirp, 60 + Math.random() * 120);
+    }
+    chirp();
+  },
+  fire() {
+    // Kamp ateşi: odun çıtırtısı + yumuşak ısı hışırtısı
+    playNoise('brown', 'lowpass', 600, 0.5);
+    playLFONoise('brown', 0.3, 200, 500);
+    function crackle() {
+      if (state.audio.currentSound !== 'fire') return;
+      const t = audioCtx.currentTime;
+      const src2 = audioCtx.createBufferSource();
+      src2.buffer = createNoiseBuffer('white', 0.15);
+      const f = audioCtx.createBiquadFilter();
+      f.type = 'bandpass'; f.frequency.value = 800 + Math.random() * 1200;
+      const g = audioCtx.createGain();
+      const vol = 0.05 + Math.random() * 0.1;
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      src2.connect(f); f.connect(g); g.connect(masterGain);
+      src2.start(t); src2.stop(t + 0.2);
+      activeNodes.push(src2);
+      setTimeout(crackle, 200 + Math.random() * 800);
+    }
+    crackle();
+  },
   bowl() {
     function strike() {
       if (state.audio.currentSound !== 'bowl') return;
-      [262, 524, 786, 1048].forEach((freq, i) => {
+      [256, 512, 768, 1024].forEach((freq, i) => {
         const osc = audioCtx.createOscillator();
         osc.type = 'sine';
         osc.frequency.value = freq;
         const g = audioCtx.createGain();
         const t = audioCtx.currentTime;
-        const vol = 0.08 / (i + 1);
+        const vol = 0.09 / (i + 1);
         g.gain.setValueAtTime(vol, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 6);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 8);
         osc.connect(g); g.connect(masterGain);
-        osc.start(t); osc.stop(t + 6);
+        osc.start(t); osc.stop(t + 8);
         activeNodes.push(osc);
       });
-      setTimeout(strike, 6500);
+      setTimeout(strike, 9000);
     }
     strike();
   },
@@ -3063,8 +3186,21 @@ const soundGenerators = {
     playOscillator(528 * 2, 'sine', 0.03);
   },
   binaural() {
-    playOscillator(432, 'sine', 0.10);
-    playOscillator(436, 'sine', 0.10);
+    // 40 Hz gamma dalga — sol/sağ ayrı kanallarla gerçek binaural
+    const leftOsc = audioCtx.createOscillator();
+    leftOsc.type = 'sine';
+    leftOsc.frequency.value = 200;
+    const rightOsc = audioCtx.createOscillator();
+    rightOsc.type = 'sine';
+    rightOsc.frequency.value = 210; // 10 Hz theta fark
+    const merger = audioCtx.createChannelMerger(2);
+    const lg = audioCtx.createGain(); lg.gain.value = 0.10;
+    const rg = audioCtx.createGain(); rg.gain.value = 0.10;
+    leftOsc.connect(lg); lg.connect(merger, 0, 0);
+    rightOsc.connect(rg); rg.connect(merger, 0, 1);
+    merger.connect(masterGain);
+    leftOsc.start(); rightOsc.start();
+    activeNodes.push(leftOsc, rightOsc);
   },
   om() {
     playOscillator(136.1, 'sine', 0.10);
@@ -3110,18 +3246,24 @@ async function playSound(name) {
     }
 
     bgmStreamEl.loop = true;
-    bgmStreamEl.src = STREAM_MP3[name];
-    bgmStreamEl.volume = (state.audio.muted ? 0 : state.audio.volume / 100) * 0.85;
-
-    bgmStreamEl.play().catch(() => {
-      showToast('Müzik: önce ▶ ile okumayı başlatın veya tekrar parçaya dokunun');
-    });
+    bgmStreamEl.src = STREAM_URLS[name];
+    bgmStreamEl.volume = streamVolume();
 
     bgmStreamEl.onerror = () => {
-      showToast('Parça yüklenemedi (ağ)');
+      showToast('Müzik yüklenemedi — internet bağlantınızı kontrol edin');
       state.audio.currentSound = null;
       $$('.music-opt').forEach(b => b.classList.remove('active'));
     };
+
+    let bgmKickStarted = false;
+    const kickBgm = () => {
+      if (bgmKickStarted) return;
+      bgmKickStarted = true;
+      playBgmRobust();
+    };
+    bgmStreamEl.addEventListener('canplay', kickBgm, { once: true });
+    bgmStreamEl.load();
+    if (bgmStreamEl.readyState >= 2) kickBgm();
 
     saveAudioPref();
     return;
@@ -3164,14 +3306,11 @@ async function playSound(name) {
 }
 
 function resumeStreamAfterGesture() {
-  try {
-    initAudio();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  } catch(e) {}
-  if (bgmStreamEl && isStreamSound(state.audio.currentSound) && bgmStreamEl.src && !state.audio.muted) {
-    bgmStreamEl.volume = (state.audio.volume / 100) * 0.85;
-    bgmStreamEl.play().catch(() => {});
-  }
+  unlockWebAudioFromGesture();
+  if (!bgmStreamEl || !isStreamSound(state.audio.currentSound) || state.audio.muted) return;
+  if (!bgmStreamEl.src) return;
+  bgmStreamEl.volume = streamVolume();
+  playBgmRobust();
 }
 
 /* ─────────────────────────────────────────────
@@ -3630,6 +3769,15 @@ function init() {
   renderLibrary();
   handleHash();
   startStatsUpdate();
+
+  document.addEventListener('touchstart', () => {
+    unlockWebAudioFromGesture();
+    resumeStreamAfterGesture();
+  }, { passive: true, capture: true });
+  document.addEventListener('pointerdown', () => {
+    unlockWebAudioFromGesture();
+    resumeStreamAfterGesture();
+  }, { capture: true });
 
   if (state.audio.currentSound && !state.audio.muted) {
     $$('.music-opt').forEach(b => {
