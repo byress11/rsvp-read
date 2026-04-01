@@ -2835,10 +2835,22 @@ let activeNodes = [];
 
 function initAudio() {
   if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = (state.audio.muted ? 0 : state.audio.volume / 100) * 0.5;
-  masterGain.connect(audioCtx.destination);
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) {
+      showToast('Tarayıcınız Web Audio desteklemiyor');
+      return;
+    }
+    audioCtx = new AudioCtx();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = (state.audio.muted ? 0 : state.audio.volume / 100) * 0.5;
+    masterGain.connect(audioCtx.destination);
+    console.log('AudioContext başarıyla oluşturuldu, state:', audioCtx.state);
+  } catch(e) {
+    console.error('AudioContext oluşturulamadı:', e);
+    audioCtx = null;
+    masterGain = null;
+  }
 }
 
 function setAudioVolume(vol) {
@@ -2854,8 +2866,11 @@ function setAudioVolume(vol) {
 
 function toggleMute() {
   state.audio.muted = !state.audio.muted;
-  $('#music-mute').textContent = state.audio.muted ? '🔇' : '🔊';
-  if (masterGain) {
+  const icon = state.audio.muted ? '🔇' : '🔊';
+  $('#music-mute').textContent = icon;
+  const inlineMuteEl = $('#music-mute-inline');
+  if (inlineMuteEl) inlineMuteEl.textContent = icon;
+  if (masterGain && audioCtx) {
     masterGain.gain.setTargetAtTime(
       state.audio.muted ? 0 : (state.audio.volume / 100) * 0.5,
       audioCtx.currentTime, 0.05
@@ -3166,9 +3181,17 @@ const soundGenerators = {
   },
 };
 
-function playSound(name) {
-  initAudio();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+async function playSound(name) {
+  try {
+    initAudio();
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+  } catch(e) {
+    console.warn('AudioContext başlatılamadı:', e);
+    showToast('Ses sistemi başlatılamadı — tarayıcı izni gerekebilir');
+    return;
+  }
 
   stopAllAudio();
 
@@ -3184,7 +3207,14 @@ function playSound(name) {
     b.classList.toggle('active', b.dataset.sound === name);
   });
 
-  if (soundGenerators[name]) soundGenerators[name]();
+  if (soundGenerators[name]) {
+    try {
+      soundGenerators[name]();
+    } catch(e) {
+      console.error('Ses oluşturma hatası:', e);
+      showToast('Ses çalınamadı: ' + name);
+    }
+  }
   saveAudioPref();
 }
 
