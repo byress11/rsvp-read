@@ -500,6 +500,52 @@ input[type=range]::-moz-range-thumb{
   bottom:calc(1rem + var(--safe-bottom));
   z-index:90;
 }
+@media(max-width:600px){
+  #music-panel{display:none}
+}
+
+/* Home screen inline music button (mobile) */
+.home-bottom-row{
+  display:flex;gap:.75rem;align-items:center;justify-content:center;width:100%;
+}
+.btn-music-inline{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--bg-secondary);border:1px solid var(--glass-border);
+  display:none;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  transition:all .2s;
+  flex-shrink:0;
+  position:relative;
+}
+.btn-music-inline:hover,.btn-music-inline:focus{background:var(--accent);color:#0D0D0D;border-color:var(--accent)}
+@media(max-width:600px){
+  .btn-music-inline{display:inline-flex}
+}
+
+/* Music drawer when opened from inline button */
+.music-drawer-inline{
+  position:fixed;
+  bottom:auto;top:auto;
+  left:50%;transform:translateX(-50%);
+  width:calc(100% - 2rem);max-width:340px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);
+  padding:1.25rem;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  display:none;
+  max-height:60vh;overflow-y:auto;
+  z-index:200;
+}
+.music-drawer-inline.open{display:block;animation:slideUp .2s ease-out}
+
+/* Backdrop for inline drawer */
+.music-drawer-backdrop{
+  position:fixed;inset:0;z-index:199;
+  background:rgba(0,0,0,0.4);
+  display:none;
+}
+.music-drawer-backdrop.open{display:block}
 .music-toggle{
   width:48px;height:48px;border-radius:50%;
   background:var(--glass);border:1px solid var(--glass-border);
@@ -614,156 +660,231 @@ input[type=range]::-moz-range-thumb{
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ═══════════════════════════════════════════
-   PDF TEXT EDITOR OVERLAY — IDE STYLE
+   PDF PAGE VIEWER OVERLAY
    ═══════════════════════════════════════════ */
 #editor-overlay{
   position:fixed;inset:0;z-index:110;
-  display:none;align-items:center;justify-content:center;
-  padding:1rem;
-  background:rgba(0,0,0,0.8);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  display:none;
+  background:#fff;
 }
 #editor-overlay.active{display:flex}
 
 .editor-panel{
-  background:#1e1e1e;
-  border:1px solid #333;
-  border-radius:12px;
-  max-width:900px;width:100%;
-  max-height:92vh;
+  background:#ffffff;
+  border:none;
+  border-radius:0;
+  width:100%;height:100%;
   display:flex;flex-direction:column;
-  box-shadow:0 32px 100px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);
-  animation:slideUp .25s ease-out;
+  box-shadow:none;
   overflow:hidden;
 }
 
-/* === TITLEBAR (macOS style) === */
+/* === HEADER === */
 .editor-header{
   display:flex;justify-content:space-between;align-items:center;
-  padding:.65rem 1rem;
-  background:#2d2d2d;
-  border-bottom:1px solid #404040;
+  padding:.65rem 1.25rem;
+  background:#f8f8f8;
+  border-bottom:1px solid #e0e0e0;
+  flex-shrink:0;
 }
 .editor-header h2{
-  font-size:.9rem;font-weight:500;letter-spacing:.03em;
-  color:#ccc;font-family:system-ui,-apple-system,sans-serif;
+  font-size:.95rem;font-weight:600;letter-spacing:.02em;
+  color:#222;font-family:system-ui,-apple-system,sans-serif;
+  display:flex;align-items:center;gap:.5rem;
+}
+.editor-header .page-indicator{
+  font-size:.8rem;font-weight:400;color:#888;
+  font-family:'Courier New',Consolas,monospace;
 }
 .editor-header .btn-icon{
   width:32px;height:32px;
-  background:#404040;border:none;
-  color:#999;font-size:.75rem;
+  background:#e0e0e0;border:none;
+  color:#555;font-size:.75rem;
 }
 .editor-header .btn-icon:hover{background:#ff5f57;color:#fff}
 
 /* === DESCRIPTION === */
 .editor-desc{
-  font-size:.78rem;color:#999;line-height:1.5;
-  padding:.6rem 1rem;margin:0;
-  background:#252526;
-  border-bottom:1px solid #333;
+  font-size:.78rem;color:#666;line-height:1.5;
+  padding:.5rem 1.25rem;margin:0;
+  background:#fafafa;
+  border-bottom:1px solid #e0e0e0;
   font-family:system-ui,-apple-system,sans-serif;
-}
-
-/* === BODY === */
-.editor-body{
-  padding:.75rem 1rem;
-  display:flex;flex-direction:column;flex:1;min-height:0;
-  background:#1e1e1e;
+  flex-shrink:0;
 }
 
 /* === TOOLBAR === */
 .editor-toolbar{
   display:flex;flex-wrap:wrap;gap:0;
-  margin-bottom:.6rem;
+  margin:0;
   padding:0;
-  background:#252526;
-  border-radius:8px;
-  border:1px solid #333;
-  overflow:hidden;
+  background:#f0f0f0;
+  border-bottom:1px solid #ddd;
+  flex-shrink:0;
 }
 .editor-toolbar .toolbar-group{
   display:flex;gap:1px;
-  padding:4px;
-  background:#252526;
+  padding:4px 6px;
+  background:#f0f0f0;
 }
 .editor-toolbar .toolbar-group:not(:last-child){
-  border-right:2px solid #333;
+  border-right:2px solid #ddd;
 }
 .editor-toolbar .toolbar-group:last-child{border-right:none}
 
 .editor-toolbar .btn-sm{
-  padding:.4rem .65rem!important;font-size:.72rem!important;
-  min-height:32px!important;gap:.3rem!important;
-  border-radius:6px!important;
+  padding:.35rem .55rem!important;font-size:.7rem!important;
+  min-height:30px!important;gap:.25rem!important;
+  border-radius:5px!important;
   transition:all .15s!important;
-  background:#333!important;
-  border:1px solid #444!important;
-  color:#ddd!important;
+  background:#e8e8e8!important;
+  border:1px solid #ccc!important;
+  color:#333!important;
   font-family:system-ui,-apple-system,sans-serif!important;
   font-weight:500!important;
 }
 .editor-toolbar .btn-sm:hover{
-  background:#4a4a4a!important;color:#fff!important;
+  background:#d0d0d0!important;color:#111!important;
   transform:none!important;box-shadow:none!important;
-  border-color:#666!important;
+  border-color:#aaa!important;
 }
 
 /* Otomatik Düzelt special green style */
 .editor-toolbar .toolbar-group:first-child .btn-sm{
-  background:rgba(75,180,100,0.15)!important;
-  border-color:rgba(75,180,100,0.4)!important;
-  color:#4bb464!important;
+  background:rgba(34,139,34,0.1)!important;
+  border-color:rgba(34,139,34,0.4)!important;
+  color:#228B22!important;
 }
 .editor-toolbar .toolbar-group:first-child .btn-sm:hover{
-  background:rgba(75,180,100,0.3)!important;
-  color:#6fd07f!important;
+  background:rgba(34,139,34,0.2)!important;
+  color:#1a6e1a!important;
+}
+
+/* === BODY (page preview) === */
+.editor-body{
+  display:flex;flex-direction:column;flex:1;min-height:0;
+  background:#ffffff;
+  padding:0;
 }
 
 /* === STATS BAR === */
 .editor-stats{
-  font-size:.7rem;color:#888;
-  margin-bottom:.5rem;
-  display:flex;gap:.5rem;
-  padding:.3rem .6rem;
-  background:#252526;
-  border-radius:6px;
-  border:1px solid #333;
+  font-size:.7rem;color:#666;
+  display:flex;gap:.75rem;align-items:center;
+  padding:.35rem 1.25rem;
+  background:#f5f5f5;
+  border-bottom:1px solid #eee;
   font-family:'Courier New',Consolas,monospace;
   letter-spacing:.02em;
+  flex-shrink:0;
 }
 
-/* === TEXTAREA === */
+/* === PAGE TEXT PREVIEW (replaces textarea) === */
 #editor-textarea{
-  flex:1;min-height:300px;
+  flex:1;min-height:0;
   width:100%;
-  background:#1a1a2e;
-  color:#e0e0e0;
-  border:1px solid #333;
-  border-left:3px solid var(--accent);
-  border-radius:8px;
-  padding:1.2rem 1rem 1.2rem 1.2rem;
-  font-family:'Courier New','Fira Code',Consolas,monospace;
-  font-size:.88rem;
-  line-height:1.85;resize:vertical;
-  transition:border-color .2s,box-shadow .2s;
+  background:#ffffff;
+  color:#1a1a1a;
+  border:none;
+  border-left:none;
+  border-radius:0;
+  padding:1.5rem 2rem;
+  font-family:'Lora',Georgia,serif;
+  font-size:1rem;
+  line-height:1.9;
+  resize:none;
   tab-size:2;
-  caret-color:var(--accent);
+  caret-color:#C4956A;
+  overflow-y:auto;
 }
 #editor-textarea:focus{
-  border-color:var(--accent);outline:none;
-  box-shadow:0 0 0 3px rgba(196,149,106,0.12),inset 0 0 60px rgba(196,149,106,0.02);
-  border-left:3px solid var(--accent);
+  outline:none;
+  box-shadow:none;
 }
 #editor-textarea::selection{
-  background:rgba(196,149,106,0.3);
+  background:rgba(196,149,106,0.25);
 }
+
+/* === PAGE STRIP (horizontal scrollable thumbnails) === */
+.page-strip-container{
+  flex-shrink:0;
+  background:#f0f0f0;
+  border-top:1px solid #ddd;
+  padding:.5rem 0;
+}
+.page-strip-label{
+  font-size:.7rem;color:#888;padding:0 1rem .35rem;
+  font-family:system-ui,-apple-system,sans-serif;
+  font-weight:500;letter-spacing:.03em;text-transform:uppercase;
+}
+.page-strip{
+  display:flex;gap:.5rem;
+  overflow-x:auto;
+  padding:0 1rem .4rem;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+.page-strip::-webkit-scrollbar{height:4px}
+.page-strip::-webkit-scrollbar-track{background:transparent}
+.page-strip::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px}
+
+.page-card{
+  flex-shrink:0;
+  width:64px;height:80px;
+  background:#fff;
+  border:2px solid #ddd;
+  border-radius:8px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.page-card:hover{
+  border-color:#C4956A;
+  box-shadow:0 2px 8px rgba(196,149,106,0.2);
+  transform:translateY(-2px);
+}
+.page-card.active{
+  border-color:#C4956A;
+  background:linear-gradient(135deg,#fdf6ef,#fff8f0);
+  box-shadow:0 3px 12px rgba(196,149,106,0.3);
+  transform:translateY(-2px);
+}
+.page-card-num{
+  font-size:.85rem;font-weight:700;color:#444;
+  font-family:system-ui,-apple-system,sans-serif;
+}
+.page-card.active .page-card-num{color:#C4956A}
+.page-card-label{
+  font-size:.55rem;color:#999;
+  font-family:system-ui,-apple-system,sans-serif;
+  margin-top:.1rem;
+}
+.page-card.active .page-card-label{color:#C4956A}
+
+/* Page preview text lines on card */
+.page-card-preview{
+  position:absolute;inset:6px;
+  overflow:hidden;
+  pointer-events:none;
+  display:flex;flex-direction:column;gap:2px;padding-top:2px;
+}
+.page-card-preview-line{
+  height:2px;background:#ddd;border-radius:1px;
+  width:100%;
+}
+.page-card-preview-line:nth-child(odd){width:80%}
+.page-card-preview-line:nth-child(3n){width:60%}
 
 /* === ACTIONS FOOTER === */
 .editor-actions{
   display:flex;justify-content:space-between;align-items:center;gap:.75rem;
-  padding:.75rem 1rem;
-  border-top:1px solid #333;
-  background:#252526;
+  padding:.65rem 1.25rem;
+  border-top:1px solid #e0e0e0;
+  background:#f5f5f5;
+  flex-shrink:0;
 }
 .editor-actions .btn{
   font-weight:600;letter-spacing:.02em;
@@ -771,11 +892,11 @@ input[type=range]::-moz-range-thumb{
   border-radius:8px;
 }
 .editor-actions .btn-secondary{
-  background:#404040;color:#ccc;border:1px solid #555;
+  background:#e0e0e0;color:#333;border:1px solid #ccc;
 }
-.editor-actions .btn-secondary:hover{background:#555;color:#fff}
+.editor-actions .btn-secondary:hover{background:#d0d0d0;color:#111}
 .editor-actions .btn-primary{
-  background:var(--accent);color:#1a1a1a;
+  background:#C4956A;color:#fff;
   box-shadow:0 4px 16px rgba(196,149,106,0.3);
   padding:.65rem 1.5rem;
 }
@@ -786,48 +907,57 @@ input[type=range]::-moz-range-thumb{
 
 /* === FIND & REPLACE === */
 .find-replace-bar{
-  background:#252526;
-  border:1px solid #333;
-  border-radius:8px;
-  padding:.7rem .85rem;
-  margin-bottom:.6rem;
-  display:flex;flex-direction:column;gap:.45rem;
+  background:#f5f5f5;
+  border:1px solid #ddd;
+  border-radius:0;
+  padding:.5rem 1.25rem;
+  display:flex;flex-direction:column;gap:.4rem;
+  flex-shrink:0;
+  border-bottom:1px solid #ddd;
 }
 .find-replace-row{
   display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;
 }
 .find-replace-row input[type=text]{
   flex:1;min-width:140px;
-  background:#1a1a2e;color:#e0e0e0;
-  border:1px solid #444;border-radius:6px;
+  background:#fff;color:#222;
+  border:1px solid #ccc;border-radius:6px;
   padding:.4rem .7rem;font-size:.8rem;font-family:'Courier New',Consolas,monospace;
   transition:border-color .2s,box-shadow .2s;
 }
-.find-replace-row input[type=text]:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(196,149,106,0.12)}
+.find-replace-row input[type=text]:focus{border-color:#C4956A;outline:none;box-shadow:0 0 0 2px rgba(196,149,106,0.15)}
 .fr-check{
   display:flex;align-items:center;gap:.3rem;
-  font-size:.72rem;color:#999;cursor:pointer;white-space:nowrap;
+  font-size:.72rem;color:#666;cursor:pointer;white-space:nowrap;
   font-family:system-ui,-apple-system,sans-serif;
 }
 .fr-match-count{
-  font-size:.72rem;color:var(--accent);white-space:nowrap;min-width:80px;font-weight:600;
+  font-size:.72rem;color:#C4956A;white-space:nowrap;min-width:80px;font-weight:600;
   font-family:'Courier New',Consolas,monospace;
 }
 .fr-actions{justify-content:flex-start}
+
+/* === MOBILE RESPONSIVE === */
 @media(max-width:600px){
   .find-replace-row{gap:.35rem}
   .find-replace-row input[type=text]{font-size:.75rem}
-}
-
-@media(max-width:600px){
-  .editor-panel{max-height:95vh}
-  .editor-header{padding:1rem}
-  .editor-desc{padding:.5rem 1rem}
-  .editor-body{padding:.75rem 1rem}
-  .editor-toolbar{gap:.3rem;padding:.35rem}
-  .btn-sm{padding:.3rem .5rem!important;font-size:.65rem!important}
-  #editor-textarea{min-height:200px;font-size:.8rem;padding:1rem .75rem}
-  .editor-actions{padding:.75rem 1rem}
+  .editor-panel{height:100%}
+  .editor-header{padding:.6rem .75rem}
+  .editor-header h2{font-size:.85rem}
+  .editor-desc{padding:.4rem .75rem;font-size:.72rem}
+  .editor-body{padding:0}
+  .editor-toolbar{gap:.3rem}
+  .editor-toolbar .toolbar-group{padding:3px 4px}
+  .btn-sm{padding:.25rem .4rem!important;font-size:.6rem!important;min-height:28px!important}
+  #editor-textarea{font-size:.9rem;padding:1rem 1rem;line-height:1.8}
+  .editor-actions{padding:.6rem .75rem}
+  .editor-stats{padding:.3rem .75rem;font-size:.65rem}
+  .page-strip-container{padding:.4rem 0}
+  .page-strip{gap:.4rem;padding:0 .75rem .3rem}
+  .page-card{width:54px;height:68px}
+  .page-card-num{font-size:.75rem}
+  .page-card-label{font-size:.5rem}
+  .page-strip-label{padding:0 .75rem .25rem;font-size:.6rem}
 }
 
 /* Google Drive status indicator */
@@ -997,9 +1127,14 @@ input[type=range]::-moz-range-thumb{
   <div class="textarea-wrap">
     <textarea id="text-input" placeholder="Okumak istediğiniz metni buraya yapıştırın..." rows="5" aria-label="Metin girişi"></textarea>
   </div>
-  <button class="btn btn-primary" id="btn-load-text" aria-label="Metni yükle">
-    Metni Yükle
-  </button>
+  <div class="home-bottom-row">
+    <button class="btn btn-primary" id="btn-load-text" aria-label="Metni yükle">
+      Metni Yükle
+    </button>
+    <button class="btn-music-inline" id="btn-music-home" aria-label="Müzik" title="Müzik">
+      ♪
+    </button>
+  </div>
 
   <!-- Reading Library — Son Okunanlar -->
   <div id="library-section" class="library-section" style="display:none">
@@ -1192,73 +1327,80 @@ input[type=range]::-moz-range-thumb{
 </div>
 
 <!-- ═══════════════════════════════════════════
-     PDF TEXT EDITOR OVERLAY
+     PDF PAGE VIEWER OVERLAY
      ═══════════════════════════════════════════ -->
-<div id="editor-overlay" role="dialog" aria-modal="true" aria-label="Metin Düzenleme">
+<div id="editor-overlay" role="dialog" aria-modal="true" aria-label="Sayfa Görüntüleyici">
   <div class="editor-panel">
     <div class="editor-header">
-      <h2>📝 Metin Düzenleme</h2>
+      <h2>📖 Sayfa Görüntüleyici <span class="page-indicator" id="page-indicator"></span></h2>
       <button class="btn-icon" id="btn-close-editor" aria-label="Kapat">✕</button>
     </div>
     <p class="editor-desc">
-      PDF'den çıkarılan metin aşağıda gösterilmektedir. Otomatik düzeltmeleri uygulayabilir,
-      metni elle düzenleyebilir ve hazır olunca okumaya başlayabilirsiniz.
+      Başlamak istediğiniz sayfayı alttaki şeritten seçin. Seçtiğiniz sayfadan itibaren tüm metin okunacaktır.
     </p>
-    <div class="editor-body">
-      <div class="editor-toolbar">
-        <span class="toolbar-group">
-          <button class="btn btn-secondary btn-sm" id="btn-auto-fix" title="Otomatik düzeltmeleri uygula">
-            ✨ Otomatik Düzelt
-          </button>
-        </span>
-        <span class="toolbar-group">
-          <button class="btn btn-secondary btn-sm" id="btn-remove-hyphens" title="Satır sonu tireleri birleştir">
-            ➖ Tire
-          </button>
-          <button class="btn btn-secondary btn-sm" id="btn-remove-pagenum" title="Sayfa numaralarını kaldır">
-            🔢 Sayfa No
-          </button>
-          <button class="btn btn-secondary btn-sm" id="btn-remove-extra-spaces" title="Fazla boşlukları temizle">
-            ⎵ Boşluk
-          </button>
-          <button class="btn btn-secondary btn-sm" id="btn-remove-headers" title="Tekrarlayan üst/alt bilgileri kaldır">
-            📋 Üstbilgi
-          </button>
-        </span>
-        <span class="toolbar-group">
-          <button class="btn btn-secondary btn-sm" id="btn-undo-edit" title="Son değişikliği geri al">
-            ↩ Geri Al
-          </button>
-          <button class="btn btn-secondary btn-sm" id="btn-find-replace" title="Kelime bul ve değiştir">
-            🔍 Bul &amp; Değiştir
-          </button>
-        </span>
-      </div>
-
-      <div id="find-replace-bar" class="find-replace-bar" style="display:none">
-        <div class="find-replace-row">
-          <input type="text" id="fr-find" placeholder="Aranacak metin..." aria-label="Aranacak metin" autocomplete="off" spellcheck="false">
-          <label class="fr-check"><input type="checkbox" id="fr-case"> Büyük/Küçük Harf</label>
-          <label class="fr-check"><input type="checkbox" id="fr-word"> Tam Kelime</label>
-        </div>
-        <div class="find-replace-row">
-          <input type="text" id="fr-replace" placeholder="Yeni metin (boş bırakılırsa siler)..." aria-label="Yeni metin" autocomplete="off" spellcheck="false">
-          <span id="fr-match-count" class="fr-match-count"></span>
-        </div>
-        <div class="find-replace-row fr-actions">
-          <button class="btn btn-secondary btn-sm" id="fr-btn-replace-one">Birini Değiştir</button>
-          <button class="btn btn-secondary btn-sm" id="fr-btn-replace-all">Tümünü Değiştir</button>
-          <button class="btn btn-secondary btn-sm" id="fr-btn-delete-all">Tümünü Sil</button>
-          <button class="btn btn-secondary btn-sm" id="fr-btn-close">✕ Kapat</button>
-        </div>
-      </div>
-
-      <div class="editor-stats" id="editor-stats"></div>
-      <textarea id="editor-textarea" spellcheck="true" aria-label="Düzenlenebilir metin"></textarea>
+    <div class="editor-toolbar">
+      <span class="toolbar-group">
+        <button class="btn btn-secondary btn-sm" id="btn-auto-fix" title="Otomatik düzeltmeleri uygula">
+          ✨ Otomatik Düzelt
+        </button>
+      </span>
+      <span class="toolbar-group">
+        <button class="btn btn-secondary btn-sm" id="btn-remove-hyphens" title="Satır sonu tireleri birleştir">
+          ➖ Tire
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btn-remove-pagenum" title="Sayfa numaralarını kaldır">
+          🔢 Sayfa No
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btn-remove-extra-spaces" title="Fazla boşlukları temizle">
+          ⎵ Boşluk
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btn-remove-headers" title="Tekrarlayan üst/alt bilgileri kaldır">
+          📋 Üstbilgi
+        </button>
+      </span>
+      <span class="toolbar-group">
+        <button class="btn btn-secondary btn-sm" id="btn-undo-edit" title="Son değişikliği geri al">
+          ↩ Geri Al
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btn-find-replace" title="Kelime bul ve değiştir">
+          🔍 Bul &amp; Değiştir
+        </button>
+      </span>
     </div>
+
+    <div id="find-replace-bar" class="find-replace-bar" style="display:none">
+      <div class="find-replace-row">
+        <input type="text" id="fr-find" placeholder="Aranacak metin..." aria-label="Aranacak metin" autocomplete="off" spellcheck="false">
+        <label class="fr-check"><input type="checkbox" id="fr-case"> Büyük/Küçük Harf</label>
+        <label class="fr-check"><input type="checkbox" id="fr-word"> Tam Kelime</label>
+      </div>
+      <div class="find-replace-row">
+        <input type="text" id="fr-replace" placeholder="Yeni metin (boş bırakılırsa siler)..." aria-label="Yeni metin" autocomplete="off" spellcheck="false">
+        <span id="fr-match-count" class="fr-match-count"></span>
+      </div>
+      <div class="find-replace-row fr-actions">
+        <button class="btn btn-secondary btn-sm" id="fr-btn-replace-one">Birini Değiştir</button>
+        <button class="btn btn-secondary btn-sm" id="fr-btn-replace-all">Tümünü Değiştir</button>
+        <button class="btn btn-secondary btn-sm" id="fr-btn-delete-all">Tümünü Sil</button>
+        <button class="btn btn-secondary btn-sm" id="fr-btn-close">✕ Kapat</button>
+      </div>
+    </div>
+
+    <div class="editor-stats" id="editor-stats"></div>
+
+    <div class="editor-body">
+      <textarea id="editor-textarea" spellcheck="false" readonly aria-label="Sayfa metni önizleme"></textarea>
+    </div>
+
+    <!-- Page Strip -->
+    <div class="page-strip-container" id="page-strip-container">
+      <div class="page-strip-label">📄 Sayfalar — Başlamak istediğiniz sayfaya tıklayın</div>
+      <div class="page-strip" id="page-strip"></div>
+    </div>
+
     <div class="editor-actions">
       <button class="btn btn-secondary" id="btn-editor-cancel">İptal</button>
-      <button class="btn btn-primary" id="btn-editor-read">Okumaya Başla →</button>
+      <button class="btn btn-primary" id="btn-editor-read">📖 Bu Sayfadan Okumaya Başla →</button>
     </div>
   </div>
 </div>
@@ -1329,6 +1471,52 @@ input[type=range]::-moz-range-thumb{
   </div>
 </div>
 
+<!-- Mobile inline music drawer (shown when btn-music-home is tapped) -->
+<div class="music-drawer-backdrop" id="music-drawer-backdrop"></div>
+<div class="music-drawer-inline" id="music-drawer-inline">
+  <div class="music-category">
+    <div class="music-category-title">🎼 Klasik Müzik</div>
+    <div class="music-options">
+      <button class="music-opt" data-sound="bach">Bach Prelüd</button>
+      <button class="music-opt" data-sound="debussy">Debussy</button>
+      <button class="music-opt" data-sound="satie">Satie</button>
+      <button class="music-opt" data-sound="chopin">Chopin</button>
+    </div>
+  </div>
+  <div class="music-category">
+    <div class="music-category-title">🌊 Doğa Sesleri</div>
+    <div class="music-options">
+      <button class="music-opt" data-sound="rain">Yağmur</button>
+      <button class="music-opt" data-sound="ocean">Okyanus</button>
+      <button class="music-opt" data-sound="forest">Orman</button>
+      <button class="music-opt" data-sound="waterfall">Şelale</button>
+    </div>
+  </div>
+  <div class="music-category">
+    <div class="music-category-title">☕ Lo-fi / Ambiyans</div>
+    <div class="music-options">
+      <button class="music-opt" data-sound="cafe">Kafe</button>
+      <button class="music-opt" data-sound="lofi">Lo-fi</button>
+      <button class="music-opt" data-sound="whitenoise">White Noise</button>
+      <button class="music-opt" data-sound="brownnoise">Brown Noise</button>
+    </div>
+  </div>
+  <div class="music-category">
+    <div class="music-category-title">🧘 Meditasyon</div>
+    <div class="music-options">
+      <button class="music-opt" data-sound="bowl">Tibet Çanağı</button>
+      <button class="music-opt" data-sound="hz528">528 Hz</button>
+      <button class="music-opt" data-sound="binaural">Binaural</button>
+      <button class="music-opt" data-sound="om">Om</button>
+    </div>
+  </div>
+  <div class="music-volume">
+    <button class="music-mute" id="music-mute-inline" aria-label="Sessize al">🔊</button>
+    <input type="range" id="music-volume-inline" min="0" max="100" value="40" aria-label="Ses seviyesi">
+    <span style="font-size:.75rem;min-width:2em;text-align:right" id="volume-val-inline">40</span>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════
      JAVASCRIPT
      ═══════════════════════════════════════════ -->
@@ -1361,6 +1549,8 @@ const state = {
   timer: null,
   fileHash: '',
   fileName: '',
+  pdfPages: [],
+  selectedPageIndex: 0,
 
   settings: {
     theme: 'dark',
@@ -1525,7 +1715,7 @@ function updateGDriveStatusUI() {
 }
 
 /* ─────────────────────────────────────────────
-   PDF TEXT EDITOR — AUTO-CLEANUP ENGINE
+   PDF PAGE VIEWER — AUTO-CLEANUP ENGINE
    ───────────────────────────────────────────── */
 let editorUndoStack = [];
 let pendingEditorText = '';
@@ -1533,10 +1723,86 @@ let pendingEditorText = '';
 function openEditor(rawText, sourceName) {
   pendingEditorText = rawText;
   editorUndoStack = [];
+
   const ta = $('#editor-textarea');
-  ta.value = rawText;
+  const strip = $('#page-strip');
+  const indicator = $('#page-indicator');
+  const stripContainer = $('#page-strip-container');
+
+  // Check if we have per-page data
+  if (state.pdfPages.length > 0) {
+    // Show page strip and first page
+    stripContainer.style.display = '';
+    state.selectedPageIndex = 0;
+    renderPageStrip();
+    showPage(0);
+  } else {
+    // No page data (e.g. txt/epub or single block) — show all text, hide strip
+    stripContainer.style.display = 'none';
+    ta.value = rawText;
+    ta.removeAttribute('readonly');
+    if (indicator) indicator.textContent = '';
+  }
+
   updateEditorStats();
   $('#editor-overlay').classList.add('active');
+}
+
+function renderPageStrip() {
+  const strip = $('#page-strip');
+  strip.innerHTML = '';
+
+  state.pdfPages.forEach((pageText, idx) => {
+    const card = document.createElement('div');
+    card.className = 'page-card' + (idx === state.selectedPageIndex ? ' active' : '');
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', 'Sayfa ' + (idx + 1));
+
+    // Mini preview lines
+    let previewHtml = '<div class="page-card-preview">';
+    for (let i = 0; i < 8; i++) {
+      previewHtml += '<div class="page-card-preview-line"></div>';
+    }
+    previewHtml += '</div>';
+
+    card.innerHTML = previewHtml +
+      '<span class="page-card-num">' + (idx + 1) + '</span>' +
+      '<span class="page-card-label">sayfa</span>';
+
+    card.addEventListener('click', () => {
+      state.selectedPageIndex = idx;
+      showPage(idx);
+      // Update active state
+      strip.querySelectorAll('.page-card').forEach((c, i) => {
+        c.classList.toggle('active', i === idx);
+      });
+    });
+
+    strip.appendChild(card);
+  });
+}
+
+function showPage(pageIdx) {
+  const ta = $('#editor-textarea');
+  const indicator = $('#page-indicator');
+
+  if (state.pdfPages.length > 0 && pageIdx < state.pdfPages.length) {
+    ta.value = state.pdfPages[pageIdx];
+    ta.setAttribute('readonly', 'readonly');
+    if (indicator) {
+      indicator.textContent = '— Sayfa ' + (pageIdx + 1) + ' / ' + state.pdfPages.length;
+    }
+    // Scroll to top of textarea
+    ta.scrollTop = 0;
+    // Scroll the active card into view
+    const strip = $('#page-strip');
+    const activeCard = strip.children[pageIdx];
+    if (activeCard) {
+      activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+  updateEditorStats();
 }
 
 function updateEditorStats() {
@@ -1544,90 +1810,94 @@ function updateEditorStats() {
   const text = ta.value;
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;
-  const lineCount = text.split('\n').length;
-  $('#editor-stats').textContent =
-    wordCount + ' kelime · ' + charCount + ' karakter · ' + lineCount + ' satır';
+
+  let statsText = wordCount + ' kelime · ' + charCount + ' karakter';
+
+  if (state.pdfPages.length > 0) {
+    // Calculate total word count across all pages from selectedPage onwards
+    const remainingPages = state.pdfPages.length - state.selectedPageIndex;
+    const totalWords = state.pdfPages.slice(state.selectedPageIndex)
+      .join(' ').trim().split(/\s+/).filter(w => w.length > 0).length;
+    statsText += ' · Sayfa ' + (state.selectedPageIndex + 1) + '/' + state.pdfPages.length;
+    statsText += ' · Kalan ' + remainingPages + ' sayfa (' + totalWords + ' kelime)';
+  }
+
+  $('#editor-stats').textContent = statsText;
 }
 
 function pushEditorUndo() {
-  const ta = $('#editor-textarea');
-  editorUndoStack.push(ta.value);
+  if (state.pdfPages.length > 0) {
+    editorUndoStack.push(JSON.parse(JSON.stringify(state.pdfPages)));
+  } else {
+    editorUndoStack.push($('#editor-textarea').value);
+  }
   if (editorUndoStack.length > 30) editorUndoStack.shift();
 }
 
 function editorUndo() {
   if (!editorUndoStack.length) { showToast('Geri alınacak değişiklik yok'); return; }
-  const ta = $('#editor-textarea');
-  ta.value = editorUndoStack.pop();
+  const prev = editorUndoStack.pop();
+  if (state.pdfPages.length > 0 && Array.isArray(prev)) {
+    state.pdfPages = prev;
+    showPage(state.selectedPageIndex);
+  } else if (typeof prev === 'string') {
+    $('#editor-textarea').value = prev;
+  }
+  updateEditorStats();
+}
+
+// Helper: apply a text transformation function to all pages (or textarea if no pages)
+function applyToAllPages(transformFn) {
+  pushEditorUndo();
+  if (state.pdfPages.length > 0) {
+    state.pdfPages = state.pdfPages.map(pageText => transformFn(pageText));
+    showPage(state.selectedPageIndex);
+  } else {
+    const ta = $('#editor-textarea');
+    ta.value = transformFn(ta.value);
+  }
   updateEditorStats();
 }
 
 function autoFixText() {
-  pushEditorUndo();
-  const ta = $('#editor-textarea');
-  let t = ta.value;
-
-  // 1. Satır sonu tireleri birleştir (ke-\nlime → kelime)
-  t = t.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
-
-  // 2. Sayfa numaralarını kaldır (tek başına sayı olan satırlar)
-  t = t.replace(/^\s*\d{1,4}\s*$/gm, '');
-
-  // 3. Tekrarlayan üstbilgi/altbilgi tespiti ve kaldırma
-  t = removeRepeatingHeaderFooter(t);
-
-  // 4. Çoklu boş satırları tek boş satıra indir
-  t = t.replace(/\n{3,}/g, '\n\n');
-
-  // 5. Satır içi fazla boşlukları teke indir
-  t = t.replace(/[^\S\n]{2,}/g, ' ');
-
-  // 6. Satır başı/sonu boşlukları temizle
-  t = t.split('\n').map(line => line.trim()).join('\n');
-
-  // 7. Yanlış birleşmiş kelimeleri ayır (küçük→büyük geçişleri: "kelimeBaşka" → "kelime Başka")
-  t = t.replace(/([a-zçğıöşü])([A-ZÇĞİÖŞÜ])/g, '$1 $2');
-
-  // 8. Noktalama sonrası boşluk yoksa ekle
-  t = t.replace(/([.!?;:,])([A-ZÇĞİÖŞÜa-zçğıöşü])/g, '$1 $2');
-
-  // 9. Parantez / köşeli parantez bozuklukları düzelt
-  t = t.replace(/\(\s+/g, '(');
-  t = t.replace(/\s+\)/g, ')');
-
-  // 10. Boş satırlardaki görünmez karakterler temizle
-  t = t.replace(/^\s+$/gm, '');
-
-  ta.value = t.trim();
-  updateEditorStats();
+  applyToAllPages(function(t) {
+    t = t.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
+    t = t.replace(/^\s*\d{1,4}\s*$/gm, '');
+    t = removeRepeatingHeaderFooter(t);
+    t = t.replace(/\n{3,}/g, '\n\n');
+    t = t.replace(/[^\S\n]{2,}/g, ' ');
+    t = t.split('\n').map(line => line.trim()).join('\n');
+    t = t.replace(/([a-zçğıöşü])([A-ZÇĞİÖŞÜ])/g, '$1 $2');
+    t = t.replace(/([.!?;:,])([A-ZÇĞİÖŞÜa-zçğıöşü])/g, '$1 $2');
+    t = t.replace(/\(\s+/g, '(');
+    t = t.replace(/\s+\)/g, ')');
+    t = t.replace(/^\s+$/gm, '');
+    return t.trim();
+  });
   showToast('Otomatik düzeltmeler uygulandı');
 }
 
 function removeHyphens() {
-  pushEditorUndo();
-  const ta = $('#editor-textarea');
-  ta.value = ta.value.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
-  updateEditorStats();
+  applyToAllPages(function(t) {
+    return t.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
+  });
   showToast('Satır sonu tireleri birleştirildi');
 }
 
 function removePageNumbers() {
-  pushEditorUndo();
-  const ta = $('#editor-textarea');
-  ta.value = ta.value.replace(/^\s*\d{1,4}\s*$/gm, '').replace(/\n{3,}/g, '\n\n');
-  updateEditorStats();
+  applyToAllPages(function(t) {
+    return t.replace(/^\s*\d{1,4}\s*$/gm, '').replace(/\n{3,}/g, '\n\n');
+  });
   showToast('Sayfa numaraları kaldırıldı');
 }
 
 function removeExtraSpaces() {
-  pushEditorUndo();
-  const ta = $('#editor-textarea');
-  let t = ta.value;
-  t = t.replace(/[^\S\n]{2,}/g, ' ');
-  t = t.split('\n').map(l => l.trim()).join('\n');
-  t = t.replace(/\n{3,}/g, '\n\n');
-  ta.value = t;
-  updateEditorStats();
+  applyToAllPages(function(t) {
+    t = t.replace(/[^\S\n]{2,}/g, ' ');
+    t = t.split('\n').map(l => l.trim()).join('\n');
+    t = t.replace(/\n{3,}/g, '\n\n');
+    return t;
+  });
   showToast('Boşluklar düzeltildi');
 }
 
@@ -1655,11 +1925,10 @@ function removeRepeatingHeaderFooter(text) {
 }
 
 function removeHeaders() {
-  pushEditorUndo();
-  const ta = $('#editor-textarea');
-  ta.value = removeRepeatingHeaderFooter(ta.value);
-  ta.value = ta.value.replace(/\n{3,}/g, '\n\n').trim();
-  updateEditorStats();
+  applyToAllPages(function(t) {
+    t = removeRepeatingHeaderFooter(t);
+    return t.replace(/\n{3,}/g, '\n\n').trim();
+  });
   showToast('Tekrarlayan üstbilgi/altbilgiler kaldırıldı');
 }
 
@@ -2202,16 +2471,22 @@ async function parsePDF(file) {
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+    // Store text per page
+    state.pdfPages = [];
     let allText = '';
 
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
       const strings = content.items.map(item => item.str);
-      allText += strings.join(' ') + ' ';
+      const pageText = strings.join(' ').trim();
+      state.pdfPages.push(pageText);
+      allText += pageText + ' ';
     }
 
     if (allText.trim()) {
+      showToast(pdf.numPages + ' sayfa yüklendi');
       openEditor(allText.trim(), state.fileName || 'PDF');
     } else {
       showToast('PDF içeriği boş');
@@ -3094,6 +3369,10 @@ $('#btn-undo-edit').addEventListener('click', editorUndo);
 $('#btn-edit-text').addEventListener('click', () => {
   if (!state.fullText) { showToast('Düzenlenecek metin yok'); return; }
   if (state.playing) stopRSVP();
+  // If no pdfPages stored, treat as single page
+  if (!state.pdfPages.length) {
+    state.pdfPages = [];
+  }
   openEditor(state.fullText, state.fileName || 'Metin');
 });
 
@@ -3128,10 +3407,17 @@ $('#fr-btn-close').addEventListener('click', () => {
   $('#find-replace-bar').style.display = 'none';
 });
 
-$('#editor-textarea').addEventListener('input', updateEditorStats);
+// No-op: textarea is readonly for page preview mode
+// $('#editor-textarea').addEventListener('input', updateEditorStats);
 
 $('#btn-editor-read').addEventListener('click', () => {
-  const text = $('#editor-textarea').value.trim();
+  let text;
+  if (state.pdfPages.length > 0) {
+    // Concatenate from selected page onwards
+    text = state.pdfPages.slice(state.selectedPageIndex).join(' ').trim();
+  } else {
+    text = $('#editor-textarea').value.trim();
+  }
   if (!text) { showToast('Metin boş'); return; }
   $('#editor-overlay').classList.remove('active');
   loadText(text);
@@ -3284,6 +3570,78 @@ document.addEventListener('click', (e) => {
     musicDrawer.classList.remove('open');
   }
 });
+
+/* ── Inline mobile music button & drawer ── */
+const inlineDrawer = $('#music-drawer-inline');
+const inlineBackdrop = $('#music-drawer-backdrop');
+const inlineVolume = $('#music-volume-inline');
+const inlineVolVal = $('#volume-val-inline');
+
+function closeInlineDrawer() {
+  if (inlineDrawer) inlineDrawer.classList.remove('open');
+  if (inlineBackdrop) inlineBackdrop.classList.remove('open');
+}
+
+if ($('#btn-music-home')) {
+  $('#btn-music-home').addEventListener('click', () => {
+    const isOpen = inlineDrawer.classList.contains('open');
+    if (isOpen) {
+      closeInlineDrawer();
+    } else {
+      // Position the drawer centered above the button
+      const btnRect = $('#btn-music-home').getBoundingClientRect();
+      inlineDrawer.style.bottom = (window.innerHeight - btnRect.top + 8) + 'px';
+      inlineDrawer.classList.add('open');
+      inlineBackdrop.classList.add('open');
+      // Sync active states
+      inlineDrawer.querySelectorAll('.music-opt').forEach(b => {
+        b.classList.toggle('active', b.dataset.sound === state.audio.currentSound);
+      });
+      // Sync volume
+      if (inlineVolume) inlineVolume.value = state.audio.volume;
+      if (inlineVolVal) inlineVolVal.textContent = state.audio.volume;
+      if ($('#music-mute-inline')) {
+        $('#music-mute-inline').textContent = state.audio.muted ? '🔇' : '🔊';
+      }
+    }
+  });
+}
+
+if (inlineBackdrop) {
+  inlineBackdrop.addEventListener('click', closeInlineDrawer);
+}
+
+// Inline drawer sound buttons
+if (inlineDrawer) {
+  inlineDrawer.querySelectorAll('.music-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      playSound(btn.dataset.sound);
+      // Sync active states in both drawers
+      $$('.music-opt').forEach(b => {
+        b.classList.toggle('active', b.dataset.sound === state.audio.currentSound);
+      });
+    });
+  });
+}
+
+// Inline volume
+if (inlineVolume) {
+  inlineVolume.addEventListener('input', () => {
+    const v = parseInt(inlineVolume.value);
+    if (inlineVolVal) inlineVolVal.textContent = v;
+    musicVolume.value = v;
+    volumeValEl.textContent = v;
+    setAudioVolume(v);
+  });
+}
+
+// Inline mute
+if ($('#music-mute-inline')) {
+  $('#music-mute-inline').addEventListener('click', () => {
+    toggleMute();
+    $('#music-mute-inline').textContent = state.audio.muted ? '🔇' : '🔊';
+  });
+}
 
 /* ─────────────────────────────────────────────
    KEYBOARD SHORTCUTS
