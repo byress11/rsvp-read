@@ -1400,8 +1400,17 @@ async function parsePDF(file) {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+    if (typeof pdfjsLib.VerbosityLevel !== 'undefined') {
+      pdfjsLib.verbosity = pdfjsLib.VerbosityLevel.ERRORS;
+    }
+
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pdf = await pdfjsLib.getDocument({
+      data: arrayBuffer,
+      stopAtErrors: false,
+      disableFontFace: true,
+      useSystemFonts: true,
+    }).promise;
 
     // Store text per page
     state.pdfPages = [];
