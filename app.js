@@ -813,6 +813,43 @@ function updateFileNameUI() {
 }
 
 /* ─────────────────────────────────────────────
+   SCREEN WAKE LOCK (telefon ekranını açık tut)
+   ───────────────────────────────────────────── */
+let wakeLockSentinel = null;
+let wakeLockLastErrorAt = 0;
+
+async function requestWakeLock() {
+  if (!('wakeLock' in navigator)) return;
+  if (wakeLockSentinel) return;
+  if (document.visibilityState !== 'visible') return;
+
+  try {
+    wakeLockSentinel = await navigator.wakeLock.request('screen');
+
+    wakeLockSentinel.addEventListener('release', () => {
+      wakeLockSentinel = null;
+      if (state.playing && document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    });
+  } catch (err) {
+    const now = Date.now();
+    if (now - wakeLockLastErrorAt > 30000) {
+      wakeLockLastErrorAt = now;
+      showToast('Ekran kilidi açılamadı (tarayıcı/pil tasarrufu engeli olabilir)');
+    }
+  }
+}
+
+async function releaseWakeLock() {
+  if (!wakeLockSentinel) return;
+  try {
+    await wakeLockSentinel.release();
+  } catch (err) {}
+  wakeLockSentinel = null;
+}
+
+/* ─────────────────────────────────────────────
    ROUTER
    ───────────────────────────────────────────── */
 function navigate(screen) {
@@ -1324,6 +1361,7 @@ function updateContextViewer(show) {
 function startRSVP() {
   if (!state.words.length) return;
   resumeStreamAfterGesture();
+  requestWakeLock();
   if (state.currentIndex >= state.words.length) {
     state.currentIndex = 0;
   }
@@ -1344,6 +1382,7 @@ function stopRSVP() {
   $('#btn-play').setAttribute('aria-label', 'Başlat');
   savePosition();
   saveStats();
+  releaseWakeLock();
   updateContextViewer(true);
 }
 
@@ -2319,8 +2358,10 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     savePosition();
     saveStats();
+    releaseWakeLock();
   } else {
     resumeStreamAfterGesture();
+    if (state.playing) requestWakeLock();
   }
 });
 
@@ -2331,6 +2372,7 @@ window.addEventListener('beforeunload', () => {
   savePosition();
   saveStats();
   saveAudioPref();
+  releaseWakeLock();
 });
 
 /* ─────────────────────────────────────────────
