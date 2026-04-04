@@ -357,7 +357,275 @@ function applyToAllPages(transformFn) {
   updateEditorStats();
 }
 
+const TR_WORD_TOKEN_RE = /^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛûÊêÔô]+$/;
+const TR_VOWEL_CHAR_RE = /[aeıioöuüâîûêô]/i;
+const TR_CONSONANT_CHAR_RE = /[bcçdfgğhjklmnprsştvyz]/i;
+
+const TR_COMMON_STANDALONE_WORDS = new Set([
+  've','ile','ama','fakat','ancak','lakin','çünkü','veya','ya','da','de','ki',
+  'mi','mı','mu','mü','bir','bu','şu','o','ben','sen','biz','siz','onlar',
+  'için','gibi','kadar','sonra','önce','en','çok','az','daha','hem','her','hiç',
+  'ne','neden','niye','nasıl','nerede','nereye','burada','orada','şimdi','artık',
+  'var','yok','olan','olur','olmaz','oldu','ise','idi','diye','bile','yalnız',
+  'sadece','evet','hayır','şey','insan','kişi','gün','ay','yıl','saat',
+  'ilk','son','orta','alt','üst','sağ','sol','ev','okul','iş'
+]);
+
+const TR_JOIN_BLOCKER_WORDS = new Set([
+  've','ile','ama','fakat','ancak','lakin','çünkü','veya','ya','da','de','ki',
+  'mi','mı','mu','mü','için','gibi','kadar','bu','şu','o','bir','çok','az','en',
+  'her','hiç','ne','neden','niye','nasıl','nerede','nereye','şey'
+]);
+
+const TR_SUFFIX_FRAGMENTS = new Set([
+  'lar','ler','ları','leri','ların','lerin',
+  'lık','lik','luk','lük','lı','li','lu','lü',
+  'sız','siz','suz','süz','cı','ci','cu','cü','çı','çi','çu','çü',
+  'dan','den','tan','ten','dır','dir','dur','dür','tır','tir','tur','tür',
+  'mış','miş','muş','müş','dı','di','du','dü','tı','ti','tu','tü',
+  'mak','mek','yor','acak','ecek','ken',
+  'ım','im','um','üm','ın','in','un','ün',
+  'ımız','imiz','umuz','ümüz','ınız','iniz','unuz','ünüz',
+  'sin','sın','sun','sün','siniz','sınız','sunuz','sünüz'
+]);
+
+function trNorm(word) {
+  return (word || '').toLocaleLowerCase('tr-TR');
+}
+
+function isTrWordToken(word) {
+  return TR_WORD_TOKEN_RE.test(word || '');
+}
+
+function shouldMergeBrokenTurkishPair(left, right) {
+  if (!isTrWordToken(left) || !isTrWordToken(right)) return false;
+
+  const l = trNorm(left);
+  const r = trNorm(right);
+  const totalLen = l.length + r.length;
+
+  if (totalLen < 4 || totalLen > 20) return false;
+  if (!TR_VOWEL_CHAR_RE.test(l + r)) return false;
+
+  const leftCommon = TR_COMMON_STANDALONE_WORDS.has(l);
+  const rightCommon = TR_COMMON_STANDALONE_WORDS.has(r);
+
+  if (leftCommon && rightCommon) return false;
+  if (TR_JOIN_BLOCKER_WORDS.has(r)) return false;
+  if (TR_JOIN_BLOCKER_WORDS.has(l) && rightCommon) return false;
+
+  if (leftCommon && !rightCommon && !TR_SUFFIX_FRAGMENTS.has(r)) return false;
+
+  if (l.length > 3 && r.length > 3) return false;
+
+  let score = 0;
+  if (!leftCommon) score += 1;
+  if (!rightCommon) score += 1;
+  if (l.length <= 2) score += 1;
+  if (r.length <= 2) score += 1;
+
+  const leftLast = l[l.length - 1];
+  const rightFirst = r[0];
+  if (TR_CONSONANT_CHAR_RE.test(leftLast) && TR_VOWEL_CHAR_RE.test(rightFirst)) score += 1;
+  if (TR_VOWEL_CHAR_RE.test(leftLast) && TR_CONSONANT_CHAR_RE.test(rightFirst)) score += 1;
+  if (TR_SUFFIX_FRAGMENTS.has(r)) score += 1;
+
+  return score >= 3;
+}
+
+function mergeBrokenTurkishWords(text) {
+  if (!text) return { text: '', count: 0 };
+
+  let fixed = text;
+  let mergedCount = 0;
+  const letterClass = 'A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛûÊêÔô';
+  const inlinePattern = new RegExp('([' + letterClass + ']{1,16})([ \\t]+)([' + letterClass + ']{1,16})', 'g');
+  const lineBreakPattern = new RegExp('([' + letterClass + ']{2,16})(\\n)([' + letterClass + ']{1,10})', 'g');
+
+  for (let pass = 0; pass < 3; pass++) {
+    let changed = 0;
+
+    fixed = fixed.replace(inlinePattern, function(match, left, gap, right) {
+      if (!shouldMergeBrokenTurkishPair(left, right)) return match;
+      changed++;
+      return left + right;
+    });
+
+    fixed = fixed.replace(lineBreakPattern, function(match, left, br, right) {
+      if (/^[A-ZÇĞİÖŞÜÂÎÛÊÔ]/.test(right)) return match;
+      if (!shouldMergeBrokenTurkishPair(left, right)) return match;
+      changed++;
+      return left + right;
+    });
+
+    mergedCount += changed;
+    if (!changed) break;
+  }
+
+  return { text: fixed, count: mergedCount };
+}
+
+const TR_HEADING_CANDIDATE_WORDS = new Set([
+  'giriş','önsöz','sonsöz','sonuç','özet','teşekkür','kaynakça','içindekiler',
+  'bölüm','kısım','ek','abstract','chapter','part','section'
+]);
+
+const TR_LINE_CONTINUATION_HINT_WORDS = new Set([
+  've','veya','ya','ama','fakat','ancak','lakin','çünkü','ki','de','da',
+  'ile','için','gibi','kadar','sonra','önce','yoksa','ise','diye','mi','mı','mu','mü'
+]);
+
+function fixIsolatedSingleLetterLines(text) {
+  if (!text) return { text: '', count: 0 };
+
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  let fixedCount = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const cur = (lines[i] || '').trim();
+    if (!/^[A-ZÇĞİÖŞÜ]$/.test(cur)) continue;
+
+    let nextIdx = i + 1;
+    while (nextIdx < lines.length && !(lines[nextIdx] || '').trim()) nextIdx++;
+    if (nextIdx >= lines.length) continue;
+
+    const nextLine = (lines[nextIdx] || '').trim();
+    if (!/^[a-zçğıöşüâîûêô]/.test(nextLine)) continue;
+
+    const nextWordMatch = nextLine.match(/^([A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛûÊêÔô]+)/);
+    const nextFirstWord = trNorm(nextWordMatch ? nextWordMatch[1] : '');
+
+    let prevIdx = i - 1;
+    while (prevIdx >= 0 && !(lines[prevIdx] || '').trim()) prevIdx--;
+    const prevLine = prevIdx >= 0 ? (lines[prevIdx] || '').trim() : '';
+    const prevEndsSentence = /[.!?…:]$/.test(prevLine);
+
+    if (nextFirstWord && TR_LINE_CONTINUATION_HINT_WORDS.has(nextFirstWord) && prevLine && !prevEndsSentence) {
+      lines[i] = '';
+      fixedCount++;
+      continue;
+    }
+
+    const paragraphStart = !prevLine || prevEndsSentence || (i > 0 && !(lines[i - 1] || '').trim());
+    if (paragraphStart) {
+      lines[nextIdx] = cur + nextLine;
+      lines[i] = '';
+      fixedCount++;
+    }
+  }
+
+  return { text: lines.join('\n'), count: fixedCount };
+}
+
+function isLikelyHeadingLikeLine(line) {
+  const t = (line || '').trim();
+  if (!t) return false;
+  if (t.length > 80) return false;
+
+  if (/^#{1,6}\s/.test(t)) return true;
+  if (/^(?:\d+|[IVXLCDM]+)[.)]\s+\S+/i.test(t)) return true;
+
+  if (/^[A-ZÇĞİÖŞÜ0-9\s]{3,}$/.test(t) && t.split(/\s+/).length <= 10) return true;
+
+  const words = t.split(/\s+/).filter(Boolean);
+  const firstWord = trNorm((words[0] || '').replace(/[^A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛûÊêÔô]/g, ''));
+
+  if (firstWord && TR_HEADING_CANDIDATE_WORDS.has(firstWord) && words.length <= 4) return true;
+  if (/:$/.test(t) && words.length <= 8) return true;
+
+  return false;
+}
+
+function shouldJoinWrappedLines(prevLine, nextLine) {
+  const prev = (prevLine || '').trim();
+  const next = (nextLine || '').trim();
+  if (!prev || !next) return false;
+
+  if (isLikelyHeadingLikeLine(prev) || isLikelyHeadingLikeLine(next)) return false;
+  if (/^[-–—•*]\s+/.test(next) || /^\d+[.)]\s+/.test(next)) return false;
+
+  if (/[.!?…]$/.test(prev)) return false;
+  if (/[,:;]$/.test(prev)) return true;
+
+  const nextFirstWord = trNorm(((next.match(/^([A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛûÊêÔô]+)/) || [,''])[1]));
+  if (nextFirstWord && TR_LINE_CONTINUATION_HINT_WORDS.has(nextFirstWord)) return true;
+
+  if (/^[a-zçğıöşüâîûêô0-9("“'‘]/.test(next)) return true;
+
+  if (prev.length >= 35 && next.length >= 2) return true;
+
+  return false;
+}
+
+function fixBrokenParagraphLines(text) {
+  if (!text) return { text: '', count: 0 };
+
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  let joinedCount = 0;
+
+  lines.forEach((rawLine) => {
+    const line = rawLine.trim();
+
+    if (!line) {
+      if (out.length && out[out.length - 1] !== '') out.push('');
+      return;
+    }
+
+    if (!out.length || out[out.length - 1] === '') {
+      out.push(line);
+      return;
+    }
+
+    const prev = out[out.length - 1];
+    if (shouldJoinWrappedLines(prev, line)) {
+      out[out.length - 1] = prev + ' ' + line;
+      joinedCount++;
+    } else {
+      out.push(line);
+    }
+  });
+
+  const rebuilt = out.join('\n').replace(/[^\S\n]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  return { text: rebuilt, count: joinedCount };
+}
+
+function preCleanPdfPageText(text) {
+  let t = text || '';
+  if (!t) return { text: '', mergedCount: 0, wrappedCount: 0, isolatedCount: 0 };
+
+  t = t.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
+  t = t.replace(/[^\S\n]{2,}/g, ' ');
+  t = t.split('\n').map(line => line.trim()).join('\n');
+
+  const isolated = fixIsolatedSingleLetterLines(t);
+  t = isolated.text;
+
+  const wrapped = fixBrokenParagraphLines(t);
+  t = wrapped.text;
+
+  const merged = mergeBrokenTurkishWords(t);
+  t = merged.text;
+
+  t = t.replace(/([a-zçğıöşü])([A-ZÇĞİÖŞÜ])/g, '$1 $2');
+  t = t.replace(/([.!?;:,])([A-ZÇĞİÖŞÜa-zçğıöşü])/g, '$1 $2');
+  t = t.replace(/\(\s+/g, '(');
+  t = t.replace(/\s+\)/g, ')');
+  t = t.replace(/^\s+$/gm, '');
+
+  return {
+    text: t.trim(),
+    mergedCount: merged.count,
+    wrappedCount: wrapped.count,
+    isolatedCount: isolated.count,
+  };
+}
+
 function autoFixText() {
+  let mergedTotal = 0;
+  let wrappedJoinTotal = 0;
+  let isolatedLetterTotal = 0;
+
   applyToAllPages(function(t) {
     t = t.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
     t = t.replace(/^\s*\d{1,4}\s*$/gm, '');
@@ -365,14 +633,38 @@ function autoFixText() {
     t = t.replace(/\n{3,}/g, '\n\n');
     t = t.replace(/[^\S\n]{2,}/g, ' ');
     t = t.split('\n').map(line => line.trim()).join('\n');
+
+    const isolated = fixIsolatedSingleLetterLines(t);
+    isolatedLetterTotal += isolated.count;
+    t = isolated.text;
+
+    const wrapped = fixBrokenParagraphLines(t);
+    wrappedJoinTotal += wrapped.count;
+    t = wrapped.text;
+
     t = t.replace(/([a-zçğıöşü])([A-ZÇĞİÖŞÜ])/g, '$1 $2');
     t = t.replace(/([.!?;:,])([A-ZÇĞİÖŞÜa-zçğıöşü])/g, '$1 $2');
     t = t.replace(/\(\s+/g, '(');
     t = t.replace(/\s+\)/g, ')');
     t = t.replace(/^\s+$/gm, '');
+
+    const merged = mergeBrokenTurkishWords(t);
+    mergedTotal += merged.count;
+    t = merged.text;
+
     return t.trim();
   });
-  showToast('Otomatik düzeltmeler uygulandı');
+
+  const details = [];
+  if (wrappedJoinTotal > 0) details.push(wrappedJoinTotal + ' satır birleştirildi');
+  if (isolatedLetterTotal > 0) details.push(isolatedLetterTotal + ' tek harf satırı düzeltildi');
+  if (mergedTotal > 0) details.push(mergedTotal + ' bölünmüş kelime birleştirildi');
+
+  if (details.length) {
+    showToast('Otomatik düzeltmeler uygulandı · ' + details.join(' · '));
+  } else {
+    showToast('Otomatik düzeltmeler uygulandı');
+  }
 }
 
 function removeHyphens() {
@@ -1114,11 +1406,21 @@ async function parsePDF(file) {
     // Store text per page
     state.pdfPages = [];
     let allText = '';
+    let preFixMergedTotal = 0;
+    let preFixWrappedTotal = 0;
+    let preFixIsolatedTotal = 0;
 
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      const pageText = extractPdfPageText(content);
+      const rawPageText = extractPdfPageText(content);
+      const preFixed = preCleanPdfPageText(rawPageText);
+      const pageText = preFixed.text;
+
+      preFixMergedTotal += preFixed.mergedCount;
+      preFixWrappedTotal += preFixed.wrappedCount;
+      preFixIsolatedTotal += preFixed.isolatedCount;
+
       state.pdfPages.push(pageText);
       if (pageText) {
         allText += (allText ? '\n\n' : '') + pageText;
@@ -1126,7 +1428,16 @@ async function parsePDF(file) {
     }
 
     if (allText.trim()) {
-      showToast(pdf.numPages + ' sayfa yüklendi');
+      const details = [];
+      if (preFixWrappedTotal > 0) details.push(preFixWrappedTotal + ' satır birleştirildi');
+      if (preFixIsolatedTotal > 0) details.push(preFixIsolatedTotal + ' tek harf satırı düzeltildi');
+      if (preFixMergedTotal > 0) details.push(preFixMergedTotal + ' bölünmüş kelime birleştirildi');
+
+      if (details.length) {
+        showToast(pdf.numPages + ' sayfa yüklendi · Ön düzeltme: ' + details.join(' · '));
+      } else {
+        showToast(pdf.numPages + ' sayfa yüklendi');
+      }
       openEditor(allText.trim(), state.fileName || 'PDF');
     } else {
       showToast('PDF içeriği boş');
@@ -2011,7 +2322,9 @@ $('#btn-editor-read').addEventListener('click', () => {
   let text;
   if (state.pdfPages.length > 0) {
     // Concatenate from selected page onwards
-    text = state.pdfPages.slice(state.selectedPageIndex).join(' ').trim();
+    text = state.pdfPages.slice(state.selectedPageIndex).join('\n\n').trim();
+    const preFixed = preCleanPdfPageText(text);
+    text = preFixed.text;
   } else {
     text = $('#editor-textarea').value.trim();
   }
